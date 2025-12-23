@@ -31,11 +31,9 @@ export async function addToWaitlist(data: {
   country?: string;
   referral_source?: string;
 }) {
-  const { data: result, error } = await supabase
+  const { error } = await supabase
     .from('waitlist')
-    .insert([data])
-    .select()
-    .single();
+    .insert([data]);
 
   if (error) {
     // Handle duplicate email
@@ -45,7 +43,7 @@ export async function addToWaitlist(data: {
     throw error;
   }
 
-  return result;
+  return { success: true };
 }
 
 export async function checkWaitlistEmail(email: string) {
