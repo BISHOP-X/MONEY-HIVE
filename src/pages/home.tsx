@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode } from 'lucide-react';
+import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2 } from 'lucide-react';
 import { Footer } from "@/components/Footer";
 import { Globe } from "@/components/Globe";
 import { motion } from "framer-motion";
@@ -8,12 +8,15 @@ import { LetterFromHome } from "@/components/LetterFromHome";
 import { AppStoreBadges } from "@/components/AppStoreBadges";
 import { AIFeatures } from "@/components/AIFeatures";
 import { SocialProof } from "@/components/SocialProof";
+import { addToWaitlist } from "@/lib/supabase";
 
 export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countrySearchOpen, setCountrySearchOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -55,8 +58,8 @@ export default function HomePage() {
     { name: "Ethiopia", code: "ET", flag: "🇪🇹" }
   ];
 
-  const filteredCountries = countrySearch 
-    ? countries.filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase())) 
+  const filteredCountries = countrySearch
+    ? countries.filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
     : countries;
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function HomePage() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -73,7 +76,7 @@ export default function HomePage() {
         }
       });
     }, { threshold: 0.1 });
-    
+
     document.querySelectorAll('.animate-on-scroll').forEach(el => {
       observer.observe(el);
     });
@@ -86,31 +89,28 @@ export default function HomePage() {
 
   const handleCountrySelect = (country) => {
     setSelectedCountry(country);
-    setFormData({...formData, country: country.name});
+    setFormData({ ...formData, country: country.name });
     setCountrySearchOpen(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Enhanced form data with timestamp and device preference
-    const enhancedFormData = {
-      ...formData,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      referrer: document.referrer || 'direct'
-    };
+    setIsSubmitting(true);
+    setSubmitStatus(null);
 
-    // Store locally
-    localStorage.setItem('moneyhive_waitlist', JSON.stringify(enhancedFormData));
-    
-    // Send to Google Sheets (placeholder for actual implementation)
     try {
-      // This would be replaced with actual Google Sheets API call
-      console.log('Sending to Google Sheets:', enhancedFormData);
-      
-      alert(`Thank you for joining the waitlist, ${formData.fullName}! You'll be among the first to experience MoneyHive.`);
-      
+      await addToWaitlist({
+        email: formData.email,
+        full_name: formData.fullName,
+        country: formData.country || 'Unknown',
+        referral_source: document.referrer || 'direct'
+      });
+
+      setSubmitStatus({
+        type: 'success',
+        message: `Thank you for joining the waitlist, ${formData.fullName}! You'll be among the first to experience MoneyHive.`
+      });
+
       // Reset form
       setFormData({
         fullName: '',
@@ -119,9 +119,14 @@ export default function HomePage() {
         devicePreference: 'both'
       });
       setSelectedCountry(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
-      alert('Thank you for your interest! We\'ve saved your information locally.');
+      setSubmitStatus({
+        type: 'error',
+        message: error.message || 'Something went wrong. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -135,7 +140,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-foundation-light to-white dark:from-foundation-dark dark:to-slate-900 mode-transition">
       <Header />
-      
+
       {/* Hero Section with Globe */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -158,7 +163,7 @@ export default function HomePage() {
                 Your money travels fast—your love travels faster
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <motion.button 
+                <motion.button
                   onClick={scrollToWaitlist}
                   className="btn btn-primary group animate-button-pulse"
                   whileHover={{ y: -2, boxShadow: "0px 8px 32px rgba(227, 178, 60, 0.4)" }}
@@ -168,7 +173,7 @@ export default function HomePage() {
                   Join Waitlist
                   <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
                 </motion.button>
-                <motion.button 
+                <motion.button
                   className="btn btn-outline"
                   whileHover={{ y: -2, boxShadow: "0px 4px 16px rgba(45, 49, 66, 0.15)" }}
                   whileTap={{ scale: 0.95 }}
@@ -194,7 +199,7 @@ export default function HomePage() {
       {/* Benefits Section */}
       <section className="section-spacing px-4 bg-slate-50 dark:bg-slate-800/50 mode-transition">
         <div className="max-w-7xl mx-auto">
-          <motion.h2 
+          <motion.h2
             className="text-3xl md:text-4xl font-bold text-center mb-16 text-secondary dark:text-foundation-light font-jakarta"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -204,7 +209,7 @@ export default function HomePage() {
             AI-Powered, Fast, Secure and Built with you in mind
           </motion.h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -219,7 +224,7 @@ export default function HomePage() {
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Send money to over 100 countries instantly with real-time tracking and competitive rates.</p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -234,7 +239,7 @@ export default function HomePage() {
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Pay utilities, school fees, and more directly to local providers in your home country.</p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -249,7 +254,7 @@ export default function HomePage() {
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Enjoy transparent pricing with no hidden charges. Save up to 8x compared to traditional banks.</p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -282,7 +287,7 @@ export default function HomePage() {
       {/* How it Works */}
       <section className="section-spacing px-4 bg-white dark:bg-foundation-dark mode-transition">
         <div className="max-w-7xl mx-auto">
-          <motion.h2 
+          <motion.h2
             className="text-3xl md:text-4xl font-bold text-center mb-16 text-secondary dark:text-foundation-light font-jakarta"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -292,7 +297,7 @@ export default function HomePage() {
             How It Works
           </motion.h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <motion.div 
+            <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -305,7 +310,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Choose bills to pay</h3>
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Select from a wide range of bill payment options including utilities, education, and more.</p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -318,7 +323,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Connect your bank or card</h3>
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Securely link your payment method with bank-grade encryption.</p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -352,7 +357,7 @@ export default function HomePage() {
               <p className="text-lg text-secondary/80 dark:text-foundation-light/80 mb-8 font-jakarta">
                 Experience the future of remittances on your mobile device. Send money, pay bills, and stay connected with your loved ones anywhere, anytime.
               </p>
-              
+
               <div className="space-y-4 mb-8">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center">
@@ -393,11 +398,11 @@ export default function HomePage() {
                     Be the first to download when we launch
                   </p>
                 </div>
-                
+
                 <div className="w-48 h-48 bg-gradient-to-br from-primary/20 to-supporting/20 dark:from-primary/10 dark:to-supporting/10 rounded-xl flex items-center justify-center mx-auto mb-6">
                   <QrCode className="w-24 h-24 text-primary dark:text-primary" />
                 </div>
-                
+
                 <div className="text-center">
                   <p className="text-xs text-secondary/60 dark:text-foundation-light/60 font-jakarta">
                     Scan with your camera app
@@ -412,7 +417,7 @@ export default function HomePage() {
       {/* Waitlist Form */}
       <section id="waitlist-section" className="section-spacing px-4 bg-slate-50 dark:bg-slate-800/50 mode-transition">
         <div className="max-w-xl mx-auto">
-          <motion.div 
+          <motion.div
             className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-slate-200 dark:border-slate-600 mode-transition"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -429,7 +434,7 @@ export default function HomePage() {
                   placeholder="John Doe"
                   className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   required
                 />
               </div>
@@ -440,14 +445,14 @@ export default function HomePage() {
                   placeholder="john@example.com"
                   className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Country of Residence</label>
                 <div className="relative">
-                  <div 
+                  <div
                     className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg flex justify-between items-center cursor-pointer text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
                     onClick={() => setCountrySearchOpen(!countrySearchOpen)}
                   >
@@ -461,7 +466,7 @@ export default function HomePage() {
                     )}
                     <ArrowRight className={`h-4 w-4 transition-transform duration-300 ease-in-out ${countrySearchOpen ? 'rotate-90' : ''}`} />
                   </div>
-                  
+
                   {countrySearchOpen && (
                     <div className="absolute z-10 mt-1 w-full bg-white dark:bg-slate-700 rounded-lg shadow-lg border border-slate-200 dark:border-slate-600 overflow-hidden mode-transition">
                       <div className="p-2 border-b border-slate-200 dark:border-slate-600">
@@ -475,7 +480,7 @@ export default function HomePage() {
                       </div>
                       <div className="max-h-60 overflow-y-auto">
                         {filteredCountries.map((country) => (
-                          <div 
+                          <div
                             key={country.code}
                             className="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer flex items-center transition-colors duration-300 ease-in-out"
                             onClick={() => handleCountrySelect(country)}
@@ -494,20 +499,39 @@ export default function HomePage() {
                 <select
                   className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
                   value={formData.devicePreference}
-                  onChange={(e) => setFormData({...formData, devicePreference: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, devicePreference: e.target.value })}
                 >
                   <option value="both">Both iOS and Android</option>
                   <option value="ios">iOS (iPhone/iPad)</option>
                   <option value="android">Android</option>
                 </select>
               </div>
+
+              {/* Status Message */}
+              {submitStatus && (
+                <div className={`p-4 rounded-lg ${submitStatus.type === 'success'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                  } font-jakarta text-sm`}>
+                  {submitStatus.message}
+                </div>
+              )}
+
               <motion.button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-secondary font-semibold py-4 rounded-lg transition-all duration-300 ease-in-out font-jakarta"
-                whileHover={{ y: -2, boxShadow: "0px 8px 24px rgba(227, 178, 60, 0.3)" }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isSubmitting}
+                className="w-full bg-primary hover:bg-primary/90 text-secondary font-semibold py-4 rounded-lg transition-all duration-300 ease-in-out font-jakarta disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                whileHover={isSubmitting ? {} : { y: -2, boxShadow: "0px 8px 24px rgba(227, 178, 60, 0.3)" }}
+                whileTap={isSubmitting ? {} : { scale: 0.95 }}
               >
-                Join Waitlist
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Joining...
+                  </>
+                ) : (
+                  'Join Waitlist'
+                )}
               </motion.button>
             </form>
             <p className="text-sm text-slate-500 dark:text-slate-400 text-center mt-4 font-jakarta">
