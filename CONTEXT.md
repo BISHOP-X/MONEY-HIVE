@@ -115,19 +115,22 @@ create table public.waitlist (
 ## 8. Current Status & Next Steps
 
 ### Completed ✅
-- [x] React + Vite frontend setup
-- [x] Supabase project created and connected
-- [x] Waitlist form connected to Supabase
+- [x] React + Vite frontend
+- [x] Supabase connected (waitlist table with RLS)
+- [x] Waitlist form working locally
 - [x] Preview mode for stakeholders
 - [x] Deployed to Vercel
 
+### Vercel Setup Required
+Add these in **Vercel → Settings → Environment Variables**:
+- `VITE_SUPABASE_URL` = `https://mhuuzxxecncsfugeqide.supabase.co`
+- `VITE_SUPABASE_ANON_KEY` = `sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ`
+- Then **redeploy** for changes to take effect
+
 ### Next Up 🔜
-- [ ] Create waitlist table in Supabase SQL Editor
-- [ ] Add env vars to Vercel
 - [ ] Route protection (pages only accessible in preview mode)
 - [ ] Supabase Auth integration
 - [ ] ComplyCube sandbox integration
-- [ ] Flutterwave sandbox integration
 
 ---
 
