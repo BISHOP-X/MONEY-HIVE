@@ -17,51 +17,123 @@
 
 ## 2. Technical Stack
 
-| Component | Technology | Reasoning |
-|-----------|------------|-----------|
-| **Frontend** | React + Vite + Tailwind CSS | Fast dev server, optimized builds. PWA can be added via vite-plugin-pwa when needed. |
-| **Backend/DB** | Supabase | PostgreSQL for financial integrity, Row-Level Security (RLS), built-in auth. |
-| **Banking Engine** | Nium (Global) + Flutterwave (Africa) | Hybrid model: Nium handles UK collection/compliance; Flutterwave handles African payouts. |
-| **Identity (KYC)** | ComplyCube (Plan A) / Didit (Plan B) | See Compliance Strategy below. |
-| **AI Features** | Simple Moving Averages (SMA) | Simple math to show rate trends (Up/Down) for MVP. No complex ML. |
+| Component | Technology | Status |
+|-----------|------------|--------|
+| **Frontend** | React + Vite + Tailwind CSS | ✅ Set up |
+| **Backend/DB** | Supabase (PostgreSQL + Auth + RLS) | ✅ Connected |
+| **Banking Engine** | Nium (Global) + Flutterwave (Africa) | 🔜 Pending |
+| **Identity (KYC)** | ComplyCube (Plan A) / Didit (Plan B) | 🔜 Pending |
+| **AI Features** | Simple Moving Averages (SMA) for rate trends | 🔜 Pending |
 
 ---
 
-## 3. Compliance & Identity Strategy
+## 3. Current Infrastructure
+
+### Live URLs
+- **Production:** https://money-hive.vercel.app
+- **Stakeholder Preview:** https://money-hive.vercel.app?preview=moneyhive2024
+- **GitHub:** https://github.com/BISHOP-X/MONEY-HIVE
+
+### Supabase Project
+- **URL:** https://mhuuzxxecncsfugeqide.supabase.co
+- **Anon Key:** `sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ`
+
+### Environment Variables (Required)
+```env
+VITE_SUPABASE_URL=https://mhuuzxxecncsfugeqide.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ
+```
+
+---
+
+## 4. Access Control System
+
+| Mode | Who | Access |
+|------|-----|--------|
+| **Public** | Regular visitors | Landing page + Waitlist only |
+| **Preview** | Stakeholders (Ayodeji) | Full navigation via `?preview=moneyhive2024` |
+| **Dev** | Me | Keyboard shortcut `Ctrl+Shift+D` toggles dev mode |
+
+---
+
+## 5. Database Schema
+
+### Waitlist Table (Created)
+```sql
+create table public.waitlist (
+  id uuid default gen_random_uuid() primary key,
+  email text unique not null,
+  full_name text,
+  country text default 'GB',
+  referral_source text,
+  created_at timestamp with time zone default now(),
+  converted_to_user boolean default false
+);
+```
+
+### Profiles Table (TODO)
+- Extends Supabase auth.users
+- KYC status tracking
+- Referral system
+
+### Transactions Table (TODO)
+- Transfer history
+- Bill payments
+- Status tracking
+
+---
+
+## 6. Compliance & Identity Strategy
 
 **The Constraint:** Ayodeji wants "Zero Cost."
 
-**The Problem:** UK/US regulations require Passport, Address, and Sanctions (AML) checks. Free tools usually charge for AML.
-
 ### My "Golden Runway" Strategy:
-
-- **Plan A (Primary):** ComplyCube - Ayodeji has applied for their Startup Program ($50k Credits). This makes bank-grade compliance (AML + ID) effectively **free** for Year 1.
-- **Plan B (Backup):** Didit - If ComplyCube fails, use Didit. Free ID checks but charges ~$0.92 for AML/Address checks.
+- **Plan A (Primary):** ComplyCube - Ayodeji applied for Startup Program ($50k Credits)
+- **Plan B (Backup):** Didit - Free ID checks, ~$0.92 for AML
 
 ### Architecture Decisions:
-
-- **Tiered Verification:** Users are only verified when they click "Send Money," never at sign-up. This saves credits/money.
-- **Manual Review Dashboard:** I'm building an internal dashboard as a safety net. If APIs fail or delay, I can manually approve users to keep launch on track.
-
----
-
-## 4. Key Decisions & Agreements
-
-1. **Supabase over Firebase:** Agreed. Better for financial data structures.
-2. **Solo Dev Approach:** I'm building the MVP solo (avoiding "too many cooks") and will hire juniors later if needed.
-3. **"Free" vs. "Credits":** I've educated Ayodeji that "Free APIs" are risky/limited, and "Startup Credits" are the correct path to zero cost.
-4. **Diaspora Focus:** The app focuses on **Global Passports** (UK/US), not Nigerian IDs (BVN/NIN).
+- **Tiered Verification:** Users verified only when clicking "Send Money" (saves credits)
+- **Manual Review Dashboard:** Safety net if APIs fail
 
 ---
 
-## 5. Current Status & Next Steps
+## 7. Built Pages
 
-**Ayodeji:** Has applied for ComplyCube credits. Waiting on approval.
+| Route | Page | Status |
+|-------|------|--------|
+| `/` | Landing + Waitlist | ✅ Done |
+| `/dashboard` | User Dashboard | ✅ UI Done (needs auth) |
+| `/send-money` | Send Money | ✅ UI Done |
+| `/pay-bills` | Pay Bills | ✅ UI Done |
+| `/about` | About Us | ✅ Done |
+| `/blog` | Blog | ✅ Done |
+| `/contact` | Contact | ✅ Done |
+| `/legal/*` | Terms, Privacy, Cookies | ✅ Done |
 
-**My Tasks:**
-- [x] Initialize Supabase project
-- [x] Build React + Vite frontend shell
-- [ ] Integrating ComplyCube Sandbox (Test Mode) so development isn't blocked by credit approval wait time
-- [ ] Set up Supabase database schema (users, transactions, recipients)
-- [ ] Build core transfer flow UI
-- [ ] Integrate Flutterwave sandbox for African payouts
+---
+
+## 8. Current Status & Next Steps
+
+### Completed ✅
+- [x] React + Vite frontend setup
+- [x] Supabase project created and connected
+- [x] Waitlist form connected to Supabase
+- [x] Preview mode for stakeholders
+- [x] Deployed to Vercel
+
+### Next Up 🔜
+- [ ] Create waitlist table in Supabase SQL Editor
+- [ ] Add env vars to Vercel
+- [ ] Route protection (pages only accessible in preview mode)
+- [ ] Supabase Auth integration
+- [ ] ComplyCube sandbox integration
+- [ ] Flutterwave sandbox integration
+
+---
+
+## 9. Key Decisions & Agreements
+
+1. **Supabase over Firebase:** Better for financial data
+2. **React + Vite over Next.js:** Simpler, PWA can be added later via plugin
+3. **Solo Dev Approach:** I'm building MVP solo, hiring juniors later
+4. **Diaspora Focus:** Global Passports (UK/US), not Nigerian IDs
