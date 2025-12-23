@@ -1,0 +1,36 @@
+<svg width="160" height="48" viewBox="0 0 160 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="160" height="48" rx="12" fill="#000000"/>
+  <defs>
+    <linearGradient id="a" x1="21.8" y1="33.29" x2="5.017" y2="16.508" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00a0ff"/>
+      <stop offset=".007" stop-color="#00a1ff"/>
+      <stop offset=".26" stop-color="#00beff"/>
+      <stop offset=".512" stop-color="#00d2ff"/>
+      <stop offset=".76" stop-color="#00dfff"/>
+      <stop offset="1" stop-color="#00e3ff"/>
+    </linearGradient>
+    <linearGradient id="b" x1="33.834" y1="21.999" x2="9.637" y2="21.999" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe000"/>
+      <stop offset=".409" stop-color="#ffbd00"/>
+      <stop offset=".775" stop-color="#ffa500"/>
+      <stop offset="1" stop-color="#ff9c00"/>
+    </linearGradient>
+    <linearGradient id="c" x1="24.827" y1="22.296" x2="2.069" y2="45.054" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff3a44"/>
+      <stop offset="1" stop-color="#c31162"/>
+    </linearGradient>
+    <linearGradient id="d" x1="7.297" y1="-.176" x2="17.46" y2="10.987" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#32a071"/>
+      <stop offset=".069" stop-color="#2da771"/>
+      <stop offset=".476" stop-color="#15cf74"/>
+      <stop offset=".801" stop-color="#06e775"/>
+      <stop offset="1" stop-color="#00f076"/>
+    </linearGradient>
+  </defs>
+  <path d="M9.93 7.856a1.439 1.439 0 0 0-.362 1.03v24.228c0 .4.13.745.362 1.03l.053.051 13.586-13.586v-.32L9.983 7.805l-.053.051z" fill="url(#d)"/>
+  <path d="M28.094 24.815l-4.525-4.525v-.32l4.525-4.525.102.058 5.364 3.046c1.534.871 1.534 2.293 0 3.164l-5.364 3.046-.102.056z" fill="url(#b)"/>
+  <path d="M28.196 24.757L23.569 20.13 9.93 33.769c.502.527 1.31.594 2.209.102l16.057-9.114z" fill="url(#c)"/>
+  <path d="M28.196 15.243L12.139 6.129c-.899-.492-1.707-.425-2.209.102L23.569 19.87l4.627-4.627z" fill="url(#a)"/>
+  <text x="40" y="15" fill="white" font-family="Roboto, sans-serif" font-size="9" font-weight="400">GET IT ON</text>
+  <text x="40" y="32" fill="white" font-family="Roboto, sans-serif" font-size="18" font-weight="500">Google Play</text>
+</svg>
