@@ -560,7 +560,7 @@ export default function HomePage() {
       <Footer />
       <LetterFromHome position="right" />
 
-      <style jsx>{`
+      <style>{`
         .animate-on-scroll {
           transition: opacity 0.6s ease-out, transform 0.6s ease-out;
           transform: translateY(20px);
