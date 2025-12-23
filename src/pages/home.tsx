@@ -18,7 +18,8 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     country: '',
     devicePreference: 'both'
@@ -101,19 +102,21 @@ export default function HomePage() {
     try {
       await addToWaitlist({
         email: formData.email,
-        full_name: formData.fullName,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         country: formData.country || 'Unknown',
         referral_source: document.referrer || 'direct'
       });
 
       setSubmitStatus({
         type: 'success',
-        message: `Thank you for joining the waitlist, ${formData.fullName}! You'll be among the first to experience MoneyHive.`
+        message: `Thank you for joining the waitlist, ${formData.firstName}! You'll be among the first to experience MoneyHive.`
       });
 
       // Reset form
       setFormData({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
         country: '',
         devicePreference: 'both'
@@ -427,16 +430,29 @@ export default function HomePage() {
             <h2 className="text-2xl font-bold text-center mb-2 text-secondary dark:text-foundation-light font-jakarta">Join Our Waitlist</h2>
             <p className="text-secondary/70 dark:text-foundation-light/70 text-center mb-8 font-jakarta">Be among the first to experience the future of remittances</p>
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">First Name</label>
+                  <input
+                    type="text"
+                    placeholder="John"
+                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Last Name</label>
+                  <input
+                    type="text"
+                    placeholder="Doe"
+                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Email Address</label>
@@ -510,8 +526,8 @@ export default function HomePage() {
               {/* Status Message */}
               {submitStatus && (
                 <div className={`p-4 rounded-lg ${submitStatus.type === 'success'
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                  : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
                   } font-jakarta text-sm`}>
                   {submitStatus.message}
                 </div>

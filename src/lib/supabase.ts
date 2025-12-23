@@ -15,7 +15,8 @@ export const supabase = createClient(
 // Waitlist functions
 export async function addToWaitlist(data: {
   email: string;
-  full_name?: string;
+  first_name?: string;
+  last_name?: string;
   country?: string;
   referral_source?: string;
 }) {
