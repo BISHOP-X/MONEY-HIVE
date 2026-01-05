@@ -1,142 +1,137 @@
 # MoneyHive Project Context
 
-**Last Updated:** December 23, 2025  
-**Project:** MoneyHive (Fintech/Remittance)
+**Last Updated:** January 5, 2026
 
 ---
 
-## 1. Project Overview & Business Model
+## Quick Start
 
-**MoneyHive** is a remittance platform connecting the **Diaspora (UK/US)** to Africa (Nigeria, Ghana, Kenya).
-
-- **Core Value:** Instant cross-border transfers and bill payments
-- **Strategic Pivot:** Shifting from "Build from Scratch" to a **"Modern Fintech Integrator"** model
-- **Why:** To bypass years of legal/licensing delays and launch an MVP in 8-10 weeks using Remittance-as-a-Service (RaaS)
-
----
-
-## 2. Technical Stack
-
-| Component | Technology | Status |
-|-----------|------------|--------|
-| **Frontend** | React + Vite + Tailwind CSS | ✅ Set up |
-| **Backend/DB** | Supabase (PostgreSQL + Auth + RLS) | ✅ Connected |
-| **Banking Engine** | Nium (Global) + Flutterwave (Africa) | 🔜 Pending |
-| **Identity (KYC)** | ComplyCube (Plan A) / Didit (Plan B) | 🔜 Pending |
-| **AI Features** | Simple Moving Averages (SMA) for rate trends | 🔜 Pending |
-
----
-
-## 3. Current Infrastructure
-
-### Live URLs
-- **Production:** https://money-hive.vercel.app
-- **Stakeholder Preview:** https://money-hive.vercel.app?preview=moneyhive2024
-- **GitHub:** https://github.com/BISHOP-X/MONEY-HIVE
-
-### Supabase Project
-- **URL:** https://mhuuzxxecncsfugeqide.supabase.co
-- **Anon Key:** `sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ`
-
-### Environment Variables (Required)
-```env
-VITE_SUPABASE_URL=https://mhuuzxxecncsfugeqide.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ
+```bash
+npm install
+npm run dev
 ```
 
----
-
-## 4. Access Control System
-
-| Mode | Who | Access |
-|------|-----|--------|
-| **Public** | Regular visitors | Landing page + Waitlist only |
-| **Preview** | Stakeholders (Ayodeji) | Full navigation via `?preview=moneyhive2024` |
-| **Dev** | Me | Keyboard shortcut `Ctrl+Shift+D` toggles dev mode |
+**Preview Mode:** Add `?preview=moneyhive2024` to URL or press `Ctrl+Shift+D`
 
 ---
 
-## 5. Database Schema
+## Stack
 
-### Waitlist Table (Created)
+| Layer | Tech |
+|-------|------|
+| Frontend | React + Vite + Tailwind |
+| Backend | Supabase (PostgreSQL + Auth + RLS) |
+| Payments | Flutterwave (Africa) + Nium (Global) - pending |
+| KYC | ComplyCube or Didit - pending |
+
+---
+
+## URLs
+
+- **Live:** https://money-hive.vercel.app
+- **GitHub:** https://github.com/BISHOP-X/MONEY-HIVE
+- **Supabase:** https://vwgoiqyxvjuplhkdfpey.supabase.co
+
+---
+
+## Environment Variables
+
+```env
+VITE_SUPABASE_URL=https://vwgoiqyxvjuplhkdfpey.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3Z29pcXl4dmp1cGxoa2RmcGV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTQwNjksImV4cCI6MjA4MzAzMDA2OX0.c2_pkS5k379Yn99nfj-EEXiOzMPZrWf4gkQ2-VLvxTg
+```
+
+**Same vars needed in Vercel for production.**
+
+---
+
+## Database (Supabase)
+
+### waitlist (live)
 ```sql
 create table public.waitlist (
   id uuid default gen_random_uuid() primary key,
   email text unique not null,
-  full_name text,
-  country text default 'GB',
+  first_name text,
+  last_name text,
+  phone text,
+  country text,
+  send_to_country text,
   referral_source text,
-  created_at timestamp with time zone default now(),
+  created_at timestamptz default now(),
   converted_to_user boolean default false
 );
 ```
 
-### Profiles Table (TODO)
-- Extends Supabase auth.users
-- KYC status tracking
-- Referral system
+### profiles (TODO)
+- Extends auth.users
+- KYC status, limits, referral codes
 
-### Transactions Table (TODO)
-- Transfer history
-- Bill payments
-- Status tracking
+### transactions (TODO)
+- Transfer/bill payment history
 
 ---
 
-## 6. Compliance & Identity Strategy
+## Access Control
 
-**The Constraint:** Ayodeji wants "Zero Cost."
+| Mode | Access | How |
+|------|--------|-----|
+| Public | Landing + Waitlist only | Default |
+| Preview | Full site navigation | `?preview=moneyhive2024` |
+| Dev | Toggle preview | `Ctrl+Shift+D` |
 
-### My "Golden Runway" Strategy:
-- **Plan A (Primary):** ComplyCube - Ayodeji applied for Startup Program ($50k Credits)
-- **Plan B (Backup):** Didit - Free ID checks, ~$0.92 for AML
-
-### Architecture Decisions:
-- **Tiered Verification:** Users verified only when clicking "Send Money" (saves credits)
-- **Manual Review Dashboard:** Safety net if APIs fail
+Implemented in `src/hooks/usePreviewMode.ts`
 
 ---
 
-## 7. Built Pages
+## Key Files
 
-| Route | Page | Status |
-|-------|------|--------|
-| `/` | Landing + Waitlist | ✅ Done |
-| `/dashboard` | User Dashboard | ✅ UI Done (needs auth) |
-| `/send-money` | Send Money | ✅ UI Done |
-| `/pay-bills` | Pay Bills | ✅ UI Done |
-| `/about` | About Us | ✅ Done |
-| `/blog` | Blog | ✅ Done |
-| `/contact` | Contact | ✅ Done |
-| `/legal/*` | Terms, Privacy, Cookies | ✅ Done |
+| File | Purpose |
+|------|---------|
+| `src/pages/home.tsx` | Landing page + Waitlist form |
+| `src/lib/supabase.ts` | Supabase client + waitlist functions |
+| `src/hooks/usePreviewMode.ts` | Preview mode logic |
+| `src/components/Header.tsx` | Conditional nav based on preview |
+| `.env` | Local env vars (gitignored) |
+| `.env.example` | Template for env vars |
 
 ---
 
-## 8. Current Status & Next Steps
+## Pages Built
 
-### Completed ✅
-- [x] React + Vite frontend
-- [x] Supabase connected (waitlist table with RLS)
-- [x] Waitlist form working locally
+| Route | Status |
+|-------|--------|
+| `/` | ✅ Landing + Waitlist (functional) |
+| `/dashboard` | ✅ UI only |
+| `/send-money` | ✅ UI only |
+| `/pay-bills` | ✅ UI only |
+| `/about`, `/blog`, `/contact` | ✅ Done |
+| `/legal/*` | ✅ Done |
+
+---
+
+## What's Done
+
+- [x] Frontend scaffolding
+- [x] Supabase connected
+- [x] Waitlist form → saves to DB
+- [x] Animated success popup
 - [x] Preview mode for stakeholders
 - [x] Deployed to Vercel
 
-### Vercel Setup Required
-Add these in **Vercel → Settings → Environment Variables**:
-- `VITE_SUPABASE_URL` = `https://mhuuzxxecncsfugeqide.supabase.co`
-- `VITE_SUPABASE_ANON_KEY` = `sb_publishable_TikPWezN4mOE-Ply5NxWuA_bVJhFilJ`
-- Then **redeploy** for changes to take effect
+## What's Next
 
-### Next Up 🔜
-- [ ] Route protection (pages only accessible in preview mode)
-- [ ] Supabase Auth integration
-- [ ] ComplyCube sandbox integration
+- [ ] Add Vercel env vars + redeploy
+- [ ] Route protection (redirect public users)
+- [ ] Supabase Auth (signup/login)
+- [ ] KYC integration (ComplyCube sandbox)
+- [ ] Flutterwave sandbox (transfers)
 
 ---
 
-## 9. Key Decisions & Agreements
+## Business Context
 
-1. **Supabase over Firebase:** Better for financial data
-2. **React + Vite over Next.js:** Simpler, PWA can be added later via plugin
-3. **Solo Dev Approach:** I'm building MVP solo, hiring juniors later
-4. **Diaspora Focus:** Global Passports (UK/US), not Nigerian IDs
+**Target:** Diaspora in UK/US sending money to Nigeria, Ghana, Kenya  
+**Model:** Remittance-as-a-Service integrator (not building banking rails)  
+**Stakeholder:** Ayodeji (Bank MD)  
+**Constraint:** Minimize costs - using free tiers and startup credits

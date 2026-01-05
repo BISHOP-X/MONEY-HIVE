@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2 } from 'lucide-react';
+import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2, CheckCircle, X, AlertCircle } from 'lucide-react';
 import { Footer } from "@/components/Footer";
 import { Globe } from "@/components/Globe";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { LetterFromHome } from "@/components/LetterFromHome";
 import { AppStoreBadges } from "@/components/AppStoreBadges";
@@ -21,8 +21,9 @@ export default function HomePage() {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     country: '',
-    devicePreference: 'both'
+    sendToCountry: ''
   });
 
   const countries = [
@@ -104,7 +105,9 @@ export default function HomePage() {
         email: formData.email,
         first_name: formData.firstName,
         last_name: formData.lastName,
+        phone: formData.phone || undefined,
         country: formData.country || 'Unknown',
+        send_to_country: formData.sendToCountry || undefined,
         referral_source: document.referrer || 'direct'
       });
 
@@ -118,8 +121,9 @@ export default function HomePage() {
         firstName: '',
         lastName: '',
         email: '',
+        phone: '',
         country: '',
-        devicePreference: 'both'
+        sendToCountry: ''
       });
       setSelectedCountry(null);
     } catch (error: any) {
@@ -436,7 +440,7 @@ export default function HomePage() {
                   <input
                     type="text"
                     placeholder="John"
-                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
@@ -447,7 +451,7 @@ export default function HomePage() {
                   <input
                     type="text"
                     placeholder="Doe"
-                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     required
@@ -459,7 +463,7 @@ export default function HomePage() {
                 <input
                   type="email"
                   placeholder="john@example.com"
-                  className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -469,7 +473,7 @@ export default function HomePage() {
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Country of Residence</label>
                 <div className="relative">
                   <div
-                    className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg flex justify-between items-center cursor-pointer text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl flex justify-between items-center cursor-pointer text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta hover:border-primary"
                     onClick={() => setCountrySearchOpen(!countrySearchOpen)}
                   >
                     {selectedCountry ? (
@@ -511,26 +515,41 @@ export default function HomePage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Device Preference</label>
+                <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Phone Number <span className="text-slate-400 font-normal">(Optional)</span></label>
+                <input
+                  type="tel"
+                  placeholder="+44 7123 456789"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Where will you send money to?</label>
                 <select
-                  className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-600/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta"
-                  value={formData.devicePreference}
-                  onChange={(e) => setFormData({ ...formData, devicePreference: e.target.value })}
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta appearance-none cursor-pointer"
+                  value={formData.sendToCountry}
+                  onChange={(e) => setFormData({ ...formData, sendToCountry: e.target.value })}
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5rem' }}
                 >
-                  <option value="both">Both iOS and Android</option>
-                  <option value="ios">iOS (iPhone/iPad)</option>
-                  <option value="android">Android</option>
+                  <option value="">Select destination country</option>
+                  <option value="NG">🇳🇬 Nigeria</option>
+                  <option value="GH">🇬🇭 Ghana</option>
+                  <option value="KE">🇰🇪 Kenya</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
 
-              {/* Status Message */}
-              {submitStatus && (
-                <div className={`p-4 rounded-lg ${submitStatus.type === 'success'
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                  : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                  } font-jakarta text-sm`}>
+              {/* Error Message - inline */}
+              {submitStatus?.type === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 font-jakarta text-sm flex items-center gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
                   {submitStatus.message}
-                </div>
+                </motion.div>
               )}
 
               <motion.button
@@ -559,6 +578,89 @@ export default function HomePage() {
 
       <Footer />
       <LetterFromHome position="right" />
+
+      {/* Success Modal Popup */}
+      <AnimatePresence>
+        {submitStatus?.type === 'success' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSubmitStatus(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setSubmitStatus(null)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+
+              {/* Success Icon with animation */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", damping: 15, stiffness: 300 }}
+                className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30"
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <CheckCircle className="w-10 h-10 text-white" />
+                </motion.div>
+              </motion.div>
+
+              {/* Success Text */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-center"
+              >
+                <h3 className="text-2xl font-bold text-secondary dark:text-foundation-light font-jakarta mb-2">
+                  You're on the list! 🎉
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 font-jakarta mb-6">
+                  We'll notify you as soon as MoneyHive launches. Get ready to send money to your loved ones faster than ever!
+                </p>
+
+                {/* Decorative elements */}
+                <div className="flex justify-center gap-2 mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + i * 0.1 }}
+                      className="w-2 h-2 rounded-full bg-primary"
+                    />
+                  ))}
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setSubmitStatus(null)}
+                  className="w-full bg-primary hover:bg-primary/90 text-secondary font-semibold py-3 px-6 rounded-xl transition-all duration-300 font-jakarta"
+                >
+                  Got it!
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style>{`
         .animate-on-scroll {

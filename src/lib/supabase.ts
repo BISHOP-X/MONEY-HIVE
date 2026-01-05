@@ -28,7 +28,9 @@ export async function addToWaitlist(data: {
   email: string;
   first_name?: string;
   last_name?: string;
+  phone?: string;
   country?: string;
+  send_to_country?: string;
   referral_source?: string;
 }) {
   const { error } = await supabase
