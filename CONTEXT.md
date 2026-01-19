@@ -101,18 +101,41 @@ create table public.waitlist (
 
 ---
 
-## Access Control
+## ⚠️ TWO-MODE SYSTEM (IMPORTANT)
 
-| Mode | Who Sees What | How to Access |
-|------|---------------|---------------|
-| Public | Landing + Waitlist + Auth pages | Default |
-| Preview | Full site navigation | URL: `?preview=moneyhive2024` |
-| Authenticated | Dashboard + Send/Pay features | Login required |
-| Dev | Toggle preview anytime | Keyboard: `Ctrl+Shift+D` |
+This project operates in **two distinct modes**:
+
+### PUBLIC MODE (Default - What users see)
+- **Landing page only** → Waitlist signup form
+- **Informational pages** → About, Blog, Contact, Legal
+- **Everything else** → Redirects to `/` (home)
+- Users cannot access: login, signup, dashboard, send-money, pay-bills
+- This is for collecting waitlist signups before launch
+
+### PREVIEW MODE (Stakeholder testing)
+- **Full access** to all pages including internal features
+- Used for non-technical stakeholders to test and give feedback
+- **How to activate:**
+  - URL: `?preview=moneyhive2024` (e.g., `https://money-hive.vercel.app?preview=moneyhive2024`)
+  - Keyboard: `Ctrl+Shift+D` (for developers)
+- Preview mode persists in localStorage until manually disabled
+- Exit preview: Click "Exit Preview" banner or clear localStorage
+
+### Route Behavior Summary
+
+| Route | Public Mode | Preview Mode |
+|-------|-------------|--------------|
+| `/` | ✅ Waitlist | ✅ Waitlist |
+| `/about`, `/blog`, `/contact` | ✅ Visible | ✅ Visible |
+| `/legal/*` | ✅ Visible | ✅ Visible |
+| `/login`, `/signup` | ❌ → Redirects to `/` | ✅ Visible |
+| `/dashboard` | ❌ → Redirects to `/` | ✅ Visible |
+| `/send-money`, `/pay-bills` | ❌ → Redirects to `/` | ✅ Visible |
+| `/verify` | ❌ → Redirects to `/` | ✅ Visible |
 
 Implementation: 
-- `src/hooks/usePreviewMode.ts` - Preview mode logic
-- `src/components/ProtectedRoute.tsx` - Route guards
+- `src/hooks/usePreviewMode.ts` - Preview mode state + localStorage
+- `src/components/ProtectedRoute.tsx` - Route guards for both modes
 
 ---
 

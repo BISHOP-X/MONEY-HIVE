@@ -1,41 +1,52 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './components/theme-provider';
 import { ScrollToTop } from './components/ScrollToTop';
-import { ProtectedRoute, PublicOnlyRoute } from './components/ProtectedRoute';
+import { ProtectedRoute, PreviewOnlyRoute } from './components/ProtectedRoute';
 import { supabase } from './lib/supabase';
 import { useAuthStore } from './store/auth';
 
-// Pages
+// Public pages (always visible)
 import HomePage from './pages/home';
-import DashboardPage from './pages/dashboard';
 import AboutPage from './pages/about';
 import BusinessPage from './pages/business';
 import BlogPage from './pages/blog/index';
 import CareersPage from './pages/careers';
 import ContactPage from './pages/contact';
-import SendMoneyPage from './pages/send-money';
-import PayBillsPage from './pages/pay-bills';
 import TermsPage from './pages/legal/terms';
 import PrivacyPage from './pages/legal/privacy';
 import CookiesPage from './pages/legal/cookies';
 
-// Auth pages
+// Preview-only pages (stakeholder testing)
 import LoginPage from './pages/login';
 import SignupPage from './pages/signup';
 import VerifyPage from './pages/verify';
+import DashboardPage from './pages/dashboard';
+import SendMoneyPage from './pages/send-money';
+import PayBillsPage from './pages/pay-bills';
 
+/**
+ * TWO-MODE SYSTEM:
+ * 
+ * PUBLIC MODE (default - what users see):
+ *   - Landing page (/) with waitlist signup
+ *   - About, Blog, Contact, Legal pages
+ *   - Everything else redirects to /
+ * 
+ * PREVIEW MODE (stakeholders):
+ *   - Access via ?preview=moneyhive2024 or Ctrl+Shift+D
+ *   - Full access to all pages including dashboard, send-money, etc.
+ *   - Used for testing and stakeholder feedback
+ */
 function App() {
   const { setUser, setLoading } = useAuthStore();
 
   // Initialize auth state on app load
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -50,7 +61,9 @@ function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Public pages */}
+          {/* ============================================
+              PUBLIC PAGES - Always visible to everyone
+              ============================================ */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/business" element={<BusinessPage />} />
@@ -61,19 +74,27 @@ function App() {
           <Route path="/legal/privacy" element={<PrivacyPage />} />
           <Route path="/legal/cookies" element={<CookiesPage />} />
 
-          {/* Auth pages (redirect if logged in) */}
+          {/* ============================================
+              PREVIEW-ONLY PAGES - Auth pages for testing
+              In public mode: redirects to /
+              In preview mode: shows login/signup
+              ============================================ */}
           <Route path="/login" element={
-            <PublicOnlyRoute>
+            <PreviewOnlyRoute>
               <LoginPage />
-            </PublicOnlyRoute>
+            </PreviewOnlyRoute>
           } />
           <Route path="/signup" element={
-            <PublicOnlyRoute>
+            <PreviewOnlyRoute>
               <SignupPage />
-            </PublicOnlyRoute>
+            </PreviewOnlyRoute>
           } />
 
-          {/* Protected pages (require auth or preview mode) */}
+          {/* ============================================
+              PROTECTED PAGES - Internal app pages
+              In public mode: redirects to /
+              In preview mode: full access for testing
+              ============================================ */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />
@@ -98,6 +119,7 @@ function App() {
       </Router>
     </ThemeProvider>
   );
+}
 }
 
 export default App;
