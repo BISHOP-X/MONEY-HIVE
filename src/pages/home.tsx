@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2, CheckCircle, X, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Footer } from "@/components/Footer";
 import { Globe } from "@/components/Globe";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { LetterFromHome } from "@/components/LetterFromHome";
 import { AppStoreBadges } from "@/components/AppStoreBadges";
-import { AIFeatures } from "@/components/AIFeatures";
 import { SocialProof } from "@/components/SocialProof";
 import { addToWaitlist } from "@/lib/supabase";
 
@@ -95,6 +95,52 @@ export default function HomePage() {
     setCountrySearchOpen(false);
   };
 
+  const scrollToHowItWorks = () => {
+    const howItWorksSection = document.getElementById('how-it-works-section');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Get phone placeholder based on selected country
+  const getPhonePlaceholder = () => {
+    if (!selectedCountry) return 'Select your country first';
+    const phonePlaceholders: Record<string, string> = {
+      'GB': '+44 XXXX XXXXXX',
+      'US': '+1 (XXX) XXX-XXXX',
+      'CA': '+1 (XXX) XXX-XXXX',
+      'AU': '+61 XXX XXX XXX',
+      'DE': '+49 XXX XXXXXXX',
+      'FR': '+33 X XX XX XX XX',
+      'NG': '+234 XXX XXX XXXX',
+      'GH': '+233 XX XXX XXXX',
+      'ZA': '+27 XX XXX XXXX',
+      'KE': '+254 XXX XXXXXX',
+      'IN': '+91 XXXXX XXXXX',
+      'CN': '+86 XXX XXXX XXXX',
+      'BR': '+55 XX XXXXX XXXX',
+      'MX': '+52 XX XXXX XXXX',
+      'JP': '+81 XX XXXX XXXX',
+      'KR': '+82 XX XXXX XXXX',
+      'SG': '+65 XXXX XXXX',
+      'AE': '+971 XX XXX XXXX',
+      'SA': '+966 XX XXX XXXX',
+      'TR': '+90 XXX XXX XXXX',
+      'RU': '+7 XXX XXX XXXX',
+      'IT': '+39 XXX XXX XXXX',
+      'ES': '+34 XXX XXX XXX',
+      'NL': '+31 X XXXXXXXX',
+      'SE': '+46 XX XXX XXXX',
+      'CH': '+41 XX XXX XXXX',
+      'BE': '+32 XXX XX XX XX',
+      'PT': '+351 XXX XXX XXX',
+      'PL': '+48 XXX XXX XXX',
+      'EG': '+20 XX XXXX XXXX',
+      'ET': '+251 XX XXX XXXX'
+    };
+    return phonePlaceholders[selectedCountry.code] || 'Enter your phone number';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -163,11 +209,11 @@ export default function HomePage() {
               transition={{ duration: 0.8, ease: "easeInOut" }}
               className="text-center lg:text-left"
             >
-              <h1 className="text-4xl md:text-[3.2rem] lg:text-[3.8rem] font-bold mb-6 text-secondary dark:text-foundation-light font-jakarta leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-[3.2rem] lg:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-tight">
                 Bridging Hearts Across Continents
               </h1>
-              <p className="text-xl md:text-2xl text-primary dark:text-primary mb-8 max-w-2xl mx-auto lg:mx-0 font-jakarta">
-                Your money travels fast—your love travels faster
+              <p className="text-lg sm:text-xl md:text-2xl text-primary dark:text-primary mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0 font-jakarta">
+                Your money travels fast. Your love travels faster.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <motion.button
@@ -185,6 +231,7 @@ export default function HomePage() {
                   whileHover={{ y: -2, boxShadow: "0px 4px 16px rgba(45, 49, 66, 0.15)" }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
+                  onClick={scrollToHowItWorks}
                 >
                   How It Works
                 </motion.button>
@@ -206,16 +253,28 @@ export default function HomePage() {
       {/* Benefits Section */}
       <section className="section-spacing px-4 bg-slate-50 dark:bg-slate-800/50 mode-transition">
         <div className="max-w-7xl mx-auto">
-          <motion.h2
-            className="text-3xl md:text-4xl font-bold text-center mb-16 text-secondary dark:text-foundation-light font-jakarta"
+          <motion.div
+            className="text-center mb-10 md:mb-16 px-2"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             viewport={{ once: true }}
           >
-            AI-Powered, Fast, Secure and Built with you in mind
-          </motion.h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <motion.h2
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-secondary dark:text-foundation-light font-jakarta"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              viewport={{ once: true }}
+            >
+              AI Powered Remittances
+            </motion.h2>
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-secondary/80 dark:text-foundation-light/80 font-jakarta max-w-4xl mx-auto">
+              Fast, Secure, and Designed for Diaspora Families Like Yours
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
@@ -227,8 +286,12 @@ export default function HomePage() {
               <div className="w-14 h-14 bg-accent/20 dark:bg-accent/10 rounded-full flex items-center justify-center mb-6">
                 <Globe2 className="w-7 h-7 text-accent dark:text-accent" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Fast global transfers</h3>
-              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Send money to over 100 countries instantly with real-time tracking and competitive rates.</p>
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                Rapid Global Transfers
+              </h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
+                Starting with the UK to Nigeria, Send money to countries in under 60 seconds on average, with real time tracking and competitive exchange rates that keep more in your pocket.
+              </p>
             </motion.div>
 
             <motion.div
@@ -242,8 +305,12 @@ export default function HomePage() {
               <div className="w-14 h-14 bg-supporting/20 dark:bg-supporting/10 rounded-full flex items-center justify-center mb-6">
                 <CreditCard className="w-7 h-7 text-supporting dark:text-supporting" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Instant localised bill payments</h3>
-              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Pay utilities, school fees, and more directly to local providers in your home country.</p>
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                Seamless Local Bill Payments
+              </h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
+                Easily pay utilities, school fees, and other essentials directly to providers in your home country.
+              </p>
             </motion.div>
 
             <motion.div
@@ -257,8 +324,12 @@ export default function HomePage() {
               <div className="w-14 h-14 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <Banknote className="w-7 h-7 text-primary dark:text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Low Rates and no hidden fees</h3>
-              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Enjoy transparent pricing with no hidden charges. Save up to 8x compared to traditional banks.</p>
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                Affordable Rates with Full Transparency
+              </h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
+                Benefit from low fees and no hidden charges, potentially saving up to 8x compared to traditional banks. See exactly what you pay upfront.
+              </p>
             </motion.div>
 
             <motion.div
@@ -272,30 +343,167 @@ export default function HomePage() {
               <div className="w-14 h-14 bg-green-500/20 dark:bg-green-500/10 rounded-full flex items-center justify-center mb-6">
                 <Lock className="w-7 h-7 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Security Promise</h3>
-              <div className="space-y-3">
-                <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">End-to-end encryption + biometric authentication for ultimate security.</p>
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm font-medium font-jakarta">
-                  <Shield className="w-4 h-4 mr-2" />
-                  Bank-Grade Security
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                Robust Security You Can Trust
+              </h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
+                Protect your transfers with end to end encryption, biometric authentication, and 24/7 fraud detection, bank grade protection for peace of mind.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Diaspora-First Fintech Solutions */}
+      <section className="section-spacing px-4 bg-white dark:bg-foundation-dark mode-transition">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-10 md:mb-16 px-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta">
+              Diaspora First Fintech Solutions
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-secondary/80 dark:text-foundation-light/80 max-w-4xl mx-auto font-jakarta">
+              Discover how our startup innovation bridges financial gaps for families across borders, with secure, affordable tools tailored for diaspora communities.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-10 md:mb-16">
+            {/* Seamless Rate Locking */}
+            <motion.div
+              className="bg-slate-50 dark:bg-slate-800/50 p-5 md:p-8 rounded-2xl consistent-hover shadow-lg"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: "easeInOut" }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, boxShadow: "0px 16px 48px rgba(0, 0, 0, 0.1)" }}
+            >
+              <div className="mb-4 md:mb-6">
+                <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                  Seamless Rate Locking
+                </h3>
+                <p className="text-secondary/80 dark:text-foundation-light/80 mb-6 font-jakarta leading-relaxed">
+                  Lock in competitive exchange rates for UK Nigeria transfers, ensuring you get the best value without market surprises.
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Rate Stability</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">99.5%</span>
                 </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Lock Option</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">30 Day</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Better Value</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">Up to 6%</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/20">
+                <p className="text-sm italic text-secondary dark:text-foundation-light font-jakarta">
+                  "Secure today's rate for your next family support transfer to Lagos."
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Effortless Scheduling Tools */}
+            <motion.div
+              className="bg-slate-50 dark:bg-slate-800/50 p-5 md:p-8 rounded-2xl consistent-hover shadow-lg"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeInOut" }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, boxShadow: "0px 16px 48px rgba(0, 0, 0, 0.1)" }}
+            >
+              <div className="mb-4 md:mb-6">
+                <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                  Effortless Scheduling Tools
+                </h3>
+                <p className="text-sm md:text-base text-secondary/80 dark:text-foundation-light/80 mb-4 md:mb-6 font-jakarta leading-relaxed">
+                  Set up recurring remittances or one time payments with flexible options, designed for busy diaspora lifestyles.
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Setup Options</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">Weekly/Monthly</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Fee Reduction</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">1 to 5%</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">On Time Delivery</span>
+                  <span className="text-lg font-bold text-primary dark:text-primary font-jakarta">98.7%</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/20">
+                <p className="text-sm italic text-secondary dark:text-foundation-light font-jakarta">
+                  "Schedule monthly school fees to Nigeria and save on repeat transactions."
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Trusted Security Protocols */}
+            <motion.div
+              className="bg-slate-50 dark:bg-slate-800/50 p-5 md:p-8 rounded-2xl consistent-hover shadow-lg"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: "easeInOut" }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, boxShadow: "0px 16px 48px rgba(0, 0, 0, 0.1)" }}
+            >
+              <div className="mb-4 md:mb-6">
+                <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                  Trusted Security Protocols
+                </h3>
+                <p className="text-sm md:text-base text-secondary/80 dark:text-foundation-light/80 mb-4 md:mb-6 font-jakarta leading-relaxed">
+                  Multi layer verification and fraud monitoring protect your funds, compliant with global fintech standards.
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Secure Transactions</span>
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400 font-jakarta">99.9%</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Alerts</span>
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400 font-jakarta">Instant</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-700 rounded-lg">
+                  <span className="text-sm font-medium text-secondary/70 dark:text-foundation-light/70 font-jakarta">Fraud Policy</span>
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400 font-jakarta">Zero Tolerance</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                <p className="text-sm italic text-secondary dark:text-foundation-light font-jakarta">
+                  "Funds verified and protected during your UK to Nigeria transfer."
+                </p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* AI Features Section */}
-      <AIFeatures />
-
       {/* Social Proof Section */}
       <SocialProof />
 
       {/* How it Works */}
-      <section className="section-spacing px-4 bg-white dark:bg-foundation-dark mode-transition">
+      <section id="how-it-works-section" className="section-spacing px-4 bg-white dark:bg-foundation-dark mode-transition">
         <div className="max-w-7xl mx-auto">
           <motion.h2
-            className="text-3xl md:text-4xl font-bold text-center mb-16 text-secondary dark:text-foundation-light font-jakarta"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 md:mb-16 text-secondary dark:text-foundation-light font-jakarta"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -303,7 +511,7 @@ export default function HomePage() {
           >
             How It Works
           </motion.h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
@@ -357,11 +565,11 @@ export default function HomePage() {
               transition={{ duration: 0.8, ease: "easeInOut" }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-secondary dark:text-foundation-light font-jakarta">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta">
                 MoneyHive Mobile App
                 <span className="block text-primary dark:text-primary mt-2">Coming Soon</span>
               </h2>
-              <p className="text-lg text-secondary/80 dark:text-foundation-light/80 mb-8 font-jakarta">
+              <p className="text-base md:text-lg text-secondary/80 dark:text-foundation-light/80 mb-6 md:mb-8 font-jakarta">
                 Experience the future of remittances on your mobile device. Send money, pay bills, and stay connected with your loved ones anywhere, anytime.
               </p>
 
@@ -425,7 +633,7 @@ export default function HomePage() {
       <section id="waitlist-section" className="section-spacing px-4 bg-slate-50 dark:bg-slate-800/50 mode-transition">
         <div className="max-w-xl mx-auto">
           <motion.div
-            className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-slate-200 dark:border-slate-600 mode-transition"
+            className="bg-white dark:bg-slate-700/50 p-5 sm:p-6 md:p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-slate-200 dark:border-slate-600 mode-transition"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -439,7 +647,7 @@ export default function HomePage() {
                   <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">First Name</label>
                   <input
                     type="text"
-                    placeholder="John"
+                    placeholder="Enter your first name"
                     className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
@@ -450,7 +658,7 @@ export default function HomePage() {
                   <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Last Name</label>
                   <input
                     type="text"
-                    placeholder="Doe"
+                    placeholder="Enter your last name"
                     className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
@@ -462,7 +670,7 @@ export default function HomePage() {
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Email Address</label>
                 <input
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder="Enter your email address"
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -518,7 +726,7 @@ export default function HomePage() {
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Phone Number <span className="text-slate-400 font-normal">(Optional)</span></label>
                 <input
                   type="tel"
-                  placeholder="+44 7123 456789"
+                  placeholder={getPhonePlaceholder()}
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta placeholder:text-slate-400"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -570,7 +778,8 @@ export default function HomePage() {
               </motion.button>
             </form>
             <p className="text-sm text-slate-500 dark:text-slate-400 text-center mt-4 font-jakarta">
-              We'll notify you once we launch. No spam, ever.
+              We'll notify you once we launch. No spam, ever. By joining, you agree to our{' '}
+              <Link to="/legal/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
             </p>
           </motion.div>
         </div>

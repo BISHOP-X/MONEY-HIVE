@@ -10,6 +10,13 @@ export function Hero() {
     }
   };
 
+  const scrollToHowItWorks = () => {
+    const howItWorksSection = document.getElementById('how-it-works-section');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -42,7 +49,10 @@ export function Hero() {
                 Join Waitlist
                 <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="btn btn-outline">
+              <button 
+                onClick={scrollToHowItWorks}
+                className="btn btn-outline"
+              >
                 How It Works
               </button>
             </div>

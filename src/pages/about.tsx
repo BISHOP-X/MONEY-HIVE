@@ -21,7 +21,7 @@ export default function AboutPage() {
               </div>
               <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Our Mission</h1>
               <p className="text-xl text-secondary dark:text-foundation-light mb-8 max-w-3xl mx-auto">
-                To empower diaspora communities by providing affordable, fast, and secure financial solutions that help them care for loved ones back home—seamlessly and with confidence.
+                To empower diaspora communities by providing affordable, fast, and secure financial solutions that help them care for loved ones back home. Seamlessly and with confidence.
               </p>
               <div className="flex justify-center mb-8">
                 <div className="relative w-20 h-1 bg-gradient-to-r from-primary to-primary"></div>
@@ -54,13 +54,13 @@ export default function AboutPage() {
                   <h2 className="text-3xl font-bold mb-6 text-secondary dark:text-foundation-light">Our Story</h2>
                   <p className="text-secondary/80 dark:text-foundation-light/80 mb-4">
                     MoneyHive was born in 2025 out of a real need:
-                    As Africans living and working abroad, our founding team experienced the frustrations of sending money home—the high fees, the delays, the uncertainty, and the disconnect.
+                    As Africans living and working abroad, our founding team experienced the frustrations of sending money home. The high fees, the delays, the uncertainty, and the disconnect.
                   </p>
                   <p className="text-secondary/80 dark:text-foundation-light/80 mb-4">
                     We knew there had to be a better way.
                   </p>
                   <p className="text-secondary/80 dark:text-foundation-light/80 mb-4">
-                    Instead of waiting for traditional banks or legacy remittance companies to catch up, we built the future ourselves—using modern tech, AI tools, and customer-centric design. MoneyHive is a product of lived experience, global thinking, and relentless innovation.
+                    Instead of waiting for traditional banks or legacy remittance companies to catch up, we built the future ourselves. Using modern tech, AI tools, and customer-centric design. MoneyHive is a product of lived experience, global thinking, and relentless innovation.
                   </p>
                   <p className="text-secondary/80 dark:text-foundation-light/80">
                     We're not just building a fintech company.
@@ -82,7 +82,7 @@ export default function AboutPage() {
             <div className="max-w-4xl mx-auto text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Our Hive Values: The Soul of MoneyHive</h2>
               <p className="text-secondary/80 dark:text-foundation-light/80">
-                At MoneyHive, our foundation is built upon four guiding principles—Heart, Home, Hustle, and Hope—which encapsulate our mission to empower diaspora communities with accessible, secure, and affordable financial solutions.
+                At MoneyHive, our foundation is built upon four guiding principles: Heart, Home, Hustle, and Hope. These encapsulate our mission to empower diaspora communities with accessible, secure, and affordable financial solutions.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -208,7 +208,7 @@ export default function AboutPage() {
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-white mb-6">Join the Hive, Now</h2>
               <p className="text-white/90 text-lg mb-8">
-                We're about to launch—and we want you on the inside.<br />
+                We're about to launch and we want you on the inside.<br />
                 Be the first to experience what modern remittance should feel like.
               </p>
               <Button 
