@@ -112,13 +112,17 @@ This project operates in **two distinct modes**:
 - Users cannot access: login, signup, dashboard, send-money, pay-bills
 - This is for collecting waitlist signups before launch
 
-### PREVIEW MODE (Stakeholder testing)
-- **Full access** to all pages including internal features
-- Used for non-technical stakeholders to test and give feedback
-- **How to activate:**
-  - URL: `?preview=moneyhive2024` (e.g., `https://money-hive.vercel.app?preview=moneyhive2024`)
-- Preview mode persists in localStorage until manually disabled
-- Exit preview: Click "Exit Preview" banner or clear localStorage
+### PREVIEW MODE (Full app access)
+
+**For Developers (localhost):**
+- Auto-enabled on `localhost` and `127.0.0.1`
+- Just run `npm run dev` - you have full access automatically
+
+**For Stakeholders (production):**
+- Visit: `https://money-hive.vercel.app?preview=moneyhive2024`
+- This activates preview mode and saves it to their browser
+- They only need to use the URL once - access persists in localStorage
+- Exit preview: Click "Exit Preview" banner
 
 ### Route Behavior Summary
 
