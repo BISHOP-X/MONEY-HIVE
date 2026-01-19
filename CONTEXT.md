@@ -1,6 +1,6 @@
 # MoneyHive Project Context
 
-**Last Updated:** January 5, 2026
+**Last Updated:** January 19, 2026
 
 ---
 
@@ -15,39 +15,55 @@ npm run dev
 
 ---
 
+## What Is MoneyHive?
+
+Remittance platform for **UK/US diaspora** sending money to **Nigeria, Ghana, Kenya**.
+- Instant cross-border transfers
+- Bill payments (airtime, electricity, TV)
+- RaaS model (Remittance-as-a-Service) - we integrate, not build from scratch
+
+---
+
 ## Stack
 
-| Layer | Tech |
-|-------|------|
-| Frontend | React + Vite + Tailwind |
-| Backend | Supabase (PostgreSQL + Auth + RLS) |
-| Payments | Flutterwave (Africa) + Nium (Global) - pending |
-| KYC | ComplyCube or Didit - pending |
+| Layer | Tech | Status |
+|-------|------|--------|
+| Frontend | React + Vite + Tailwind | ✅ Done |
+| State | Zustand | ✅ Configured |
+| Backend/Auth | Supabase (PostgreSQL + RLS) | ✅ Connected |
+| Payments (Africa) | Flutterwave | ⏳ Awaiting keys |
+| Payments (Global) | Nium | ⏳ Awaiting partnership |
+| KYC/Identity | ComplyCube (Plan A) / Didit (Plan B) | ⏳ Awaiting approval |
 
 ---
 
 ## URLs
 
-- **Live:** https://money-hive.vercel.app
-- **GitHub:** https://github.com/BISHOP-X/MONEY-HIVE
-- **Supabase:** https://vwgoiqyxvjuplhkdfpey.supabase.co
+| Environment | URL |
+|-------------|-----|
+| Production | https://money-hive.vercel.app |
+| GitHub | https://github.com/BISHOP-X/MONEY-HIVE |
+| Supabase | https://vwgoiqyxvjuplhkdfpey.supabase.co |
 
 ---
 
 ## Environment Variables
 
-```env
-VITE_SUPABASE_URL=https://vwgoiqyxvjuplhkdfpey.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3Z29pcXl4dmp1cGxoa2RmcGV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTQwNjksImV4cCI6MjA4MzAzMDA2OX0.c2_pkS5k379Yn99nfj-EEXiOzMPZrWf4gkQ2-VLvxTg
-```
+Environment variables are configured in:
+- **Local:** `.env` file (gitignored)
+- **Production:** Vercel Dashboard → Settings → Environment Variables ✅
 
-**Same vars needed in Vercel for production.**
+Required variables:
+```
+VITE_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY
+```
 
 ---
 
-## Database (Supabase)
+## Database Schema
 
-### waitlist (live)
+### waitlist ✅ (live in Supabase)
 ```sql
 create table public.waitlist (
   id uuid default gen_random_uuid() primary key,
@@ -61,26 +77,78 @@ create table public.waitlist (
   created_at timestamptz default now(),
   converted_to_user boolean default false
 );
+
+-- RLS enabled, anonymous insert allowed
 ```
 
 ### profiles (TODO)
-- Extends auth.users
-- KYC status, limits, referral codes
+```sql
+-- Extends auth.users
+-- Fields: kyc_status, daily_limit, referral_code, referred_by
+```
+
+### recipients (TODO)
+```sql
+-- Saved transfer recipients
+-- Fields: user_id, name, bank_name, account_number, mobile_number
+```
 
 ### transactions (TODO)
-- Transfer/bill payment history
+```sql
+-- All transfers and bill payments
+-- Fields: user_id, type, amount, status, provider_reference
+```
 
 ---
 
 ## Access Control
 
-| Mode | Access | How |
-|------|--------|-----|
-| Public | Landing + Waitlist only | Default |
-| Preview | Full site navigation | `?preview=moneyhive2024` |
-| Dev | Toggle preview | `Ctrl+Shift+D` |
+| Mode | Who Sees What | How to Access |
+|------|---------------|---------------|
+| Public | Landing + Waitlist + Auth pages | Default |
+| Preview | Full site navigation | URL: `?preview=moneyhive2024` |
+| Authenticated | Dashboard + Send/Pay features | Login required |
+| Dev | Toggle preview anytime | Keyboard: `Ctrl+Shift+D` |
 
-Implemented in `src/hooks/usePreviewMode.ts`
+Implementation: 
+- `src/hooks/usePreviewMode.ts` - Preview mode logic
+- `src/components/ProtectedRoute.tsx` - Route guards
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── ProtectedRoute.tsx    # Auth guards for routes
+│   ├── Header.tsx            # Nav (conditional on auth/preview)
+│   └── ui/                   # shadcn/ui components
+├── hooks/
+│   └── usePreviewMode.ts     # Preview mode state
+├── lib/
+│   └── supabase.ts           # Supabase client
+├── pages/
+│   ├── home.tsx              # Landing + Waitlist
+│   ├── login.tsx             # Email/password + magic link
+│   ├── signup.tsx            # Registration with validation
+│   ├── verify.tsx            # KYC verification flow
+│   ├── dashboard.tsx         # User dashboard
+│   ├── send-money.tsx        # Transfer wizard
+│   └── pay-bills.tsx         # Bill payments
+├── services/
+│   ├── index.ts              # Barrel export
+│   ├── transfers.ts          # Mock transfer API
+│   ├── bills.ts              # Mock bills API
+│   ├── kyc.ts                # Mock KYC verification
+│   └── rates.ts              # Exchange rates
+├── store/
+│   ├── index.ts              # Barrel export
+│   ├── auth.ts               # Auth state (Zustand)
+│   ├── recipients.ts         # Recipients state
+│   └── transfer.ts           # Transfer form state
+└── App.tsx                   # Routes + auth listener
+```
 
 ---
 
@@ -88,50 +156,91 @@ Implemented in `src/hooks/usePreviewMode.ts`
 
 | File | Purpose |
 |------|---------|
-| `src/pages/home.tsx` | Landing page + Waitlist form |
-| `src/lib/supabase.ts` | Supabase client + waitlist functions |
-| `src/hooks/usePreviewMode.ts` | Preview mode logic |
-| `src/components/Header.tsx` | Conditional nav based on preview |
+| `src/App.tsx` | Routing + auth listener |
+| `src/components/ProtectedRoute.tsx` | Route protection |
+| `src/pages/login.tsx` | Login (email/password + magic link) |
+| `src/pages/signup.tsx` | Registration |
+| `src/pages/verify.tsx` | KYC flow |
+| `src/store/auth.ts` | Auth state management |
+| `src/services/` | Mock API implementations |
 | `.env` | Local env vars (gitignored) |
-| `.env.example` | Template for env vars |
+| `PLAN.md` | Full development roadmap |
 
 ---
 
-## Pages Built
+## Pages
 
-| Route | Status |
-|-------|--------|
-| `/` | ✅ Landing + Waitlist (functional) |
-| `/dashboard` | ✅ UI only |
-| `/send-money` | ✅ UI only |
-| `/pay-bills` | ✅ UI only |
-| `/about`, `/blog`, `/contact` | ✅ Done |
-| `/legal/*` | ✅ Done |
+| Route | Status | Protection |
+|-------|--------|------------|
+| `/` | ✅ Functional | Public |
+| `/login` | ✅ Done | Public (redirects if logged in) |
+| `/signup` | ✅ Done | Public (redirects if logged in) |
+| `/verify` | ✅ Done | Auth required |
+| `/dashboard` | ✅ UI + Protected | Auth or Preview |
+| `/send-money` | ✅ UI + Protected | Auth or Preview |
+| `/pay-bills` | ✅ UI + Protected | Auth or Preview |
+| `/about` | ✅ Done | Public |
+| `/blog` | ✅ Done | Public |
+| `/contact` | ✅ Done | Public |
+| `/legal/*` | ✅ Done | Public |
 
 ---
 
-## What's Done
+## Completed
 
-- [x] Frontend scaffolding
+- [x] React + Vite + Tailwind setup
+- [x] All UI pages built
 - [x] Supabase connected
 - [x] Waitlist form → saves to DB
-- [x] Animated success popup
+- [x] Animated success popup on submit
 - [x] Preview mode for stakeholders
-- [x] Deployed to Vercel
-
-## What's Next
-
-- [ ] Add Vercel env vars + redeploy
-- [ ] Route protection (redirect public users)
-- [ ] Supabase Auth (signup/login)
-- [ ] KYC integration (ComplyCube sandbox)
-- [ ] Flutterwave sandbox (transfers)
+- [x] Deployed to Vercel (env vars configured)
+- [x] Route protection (ProtectedRoute component)
+- [x] Auth pages (login, signup, verify)
+- [x] Zustand stores (auth, recipients, transfer)
+- [x] Mock services layer (transfers, bills, kyc, rates)
 
 ---
 
-## Business Context
+## Next Steps (Priority Order)
 
-**Target:** Diaspora in UK/US sending money to Nigeria, Ghana, Kenya  
-**Model:** Remittance-as-a-Service integrator (not building banking rails)  
-**Stakeholder:** Ayodeji (Bank MD)  
-**Constraint:** Minimize costs - using free tiers and startup credits
+1. **Supabase Auth testing** → Verify email confirmation flow works
+2. **Profiles table** → Auto-create on user signup (DB trigger)
+3. **Recipients CRUD** → Connect to Supabase table
+4. **Send Money flow** → Connect to mock services, show exchange rates
+5. **Bill payments** → Connect to mock bills service
+6. **Transaction history** → Create table, save all transfers/bills
+7. **KYC integration** → When ComplyCube approves
+
+---
+
+## Mock Services (Ready for Swap)
+
+All mock services are in `src/services/`. When API keys arrive, swap implementations:
+
+| Service | Mock File | Real Integration |
+|---------|-----------|------------------|
+| Transfers | `transfers.ts` | Flutterwave Transfers API |
+| Bills | `bills.ts` | Flutterwave Bills API |
+| KYC | `kyc.ts` | ComplyCube SDK |
+| Rates | `rates.ts` | Flutterwave/Nium rates |
+
+---
+
+## External Services (Pending)
+
+| Service | Purpose | Status | Action |
+|---------|---------|--------|--------|
+| Flutterwave | Payouts to Africa + Bills | ⏳ | Need sandbox API keys |
+| ComplyCube | KYC verification | ⏳ | Applied for $50k startup credits |
+| Nium | Global collection (UK/US) | ⏳ | Partnership discussion pending |
+
+---
+
+## Architecture Notes
+
+- **No backend server** - Supabase handles everything (auth, DB, RLS)
+- **RLS enabled** - Row Level Security on all tables
+- **Mock-first development** - All services have mock implementations
+- **Preview mode** - Allows stakeholder demos without auth
+- **State management** - Zustand for auth, recipients, transfer wizard
