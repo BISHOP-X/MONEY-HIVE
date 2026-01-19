@@ -117,7 +117,6 @@ This project operates in **two distinct modes**:
 - Used for non-technical stakeholders to test and give feedback
 - **How to activate:**
   - URL: `?preview=moneyhive2024` (e.g., `https://money-hive.vercel.app?preview=moneyhive2024`)
-  - Keyboard: `Ctrl+Shift+D` (for developers)
 - Preview mode persists in localStorage until manually disabled
 - Exit preview: Click "Exit Preview" banner or clear localStorage
 

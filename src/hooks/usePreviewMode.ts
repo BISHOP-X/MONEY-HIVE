@@ -27,21 +27,6 @@ export function usePreviewMode() {
     }
   }, []);
 
-  // Keyboard shortcut: Ctrl+Shift+D to toggle (for you)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        e.preventDefault();
-        const newValue = !isPreviewMode;
-        localStorage.setItem(STORAGE_KEY, String(newValue));
-        setIsPreviewMode(newValue);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isPreviewMode]);
-
   const disablePreviewMode = () => {
     localStorage.removeItem(STORAGE_KEY);
     setIsPreviewMode(false);
