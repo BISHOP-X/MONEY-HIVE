@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2, CheckCircle, X, AlertCircle } from 'lucide-react';
+import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2, CheckCircle, X, AlertCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Footer } from "@/components/Footer";
 import { Globe } from "@/components/Globe";
@@ -274,7 +274,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-8">
             <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
@@ -348,6 +348,25 @@ export default function HomePage() {
               </h3>
               <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
                 Protect your transfers with end to end encryption, biometric authentication, and 24/7 fraud detection, bank grade protection for peace of mind.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5, ease: "easeInOut" }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, boxShadow: "0px 16px 48px rgba(0, 0, 0, 0.1)" }}
+            >
+              <div className="w-14 h-14 bg-purple-500/20 dark:bg-purple-500/10 rounded-full flex items-center justify-center mb-6">
+                <Gift className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">
+                Earn Rewards & Send Gifts Home
+              </h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta leading-relaxed">
+                Earn points on every transaction that you can convert to cash. Plus, join our quarterly prize draws where we send foodstuff, gifts, and hampers directly to your loved ones back home. Building community, rewarding loyalty.
               </p>
             </motion.div>
           </div>
@@ -522,8 +541,8 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-accent/20 dark:bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-accent dark:text-accent font-jakarta">1</span>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Choose bills to pay</h3>
-              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Select from a wide range of bill payment options including utilities, education, and more.</p>
+              <h3 className="text-xl font-semibold mb-4 text-secondary dark:text-foundation-light font-jakarta">Send Money or Pay Bills</h3>
+              <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta">Choose to transfer money directly to your loved ones or pay bills like utilities, school fees, and other essentials on their behalf.</p>
             </motion.div>
             <motion.div
               className="text-center"
