@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Send, CreditCard, Shield, ArrowRight, Globe2, Banknote, Lock, Smartphone, Download, QrCode, Loader2, CheckCircle, X, AlertCircle, Gift } from 'lucide-react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { CreditCard, ArrowRight, Globe2, Banknote, Lock, Smartphone, QrCode, Loader2, CheckCircle, X, AlertCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Footer } from "@/components/Footer";
-import { Globe } from "@/components/Globe";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { LetterFromHome } from "@/components/LetterFromHome";
@@ -10,9 +9,28 @@ import { AppStoreBadges } from "@/components/AppStoreBadges";
 import { SocialProof } from "@/components/SocialProof";
 import { addToWaitlist } from "@/lib/supabase";
 
+// Lazy load the heavy Globe component
+const Globe = lazy(() => import("@/components/Globe").then(m => ({ default: m.Globe })));
+
+// Simple fade-in animation component using CSS
+const FadeIn = ({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) => (
+  <div 
+    className={`animate-fadeIn ${className}`}
+    style={{ animationDelay: `${delay}ms`, animationFillMode: 'both' }}
+  >
+    {children}
+  </div>
+);
+
+// Country type for proper typing
+interface Country {
+  name: string;
+  code: string;
+  flag: string;
+}
+
 export default function HomePage() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [countrySearchOpen, setCountrySearchOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +44,7 @@ export default function HomePage() {
     sendToCountry: ''
   });
 
-  const countries = [
+  const countries: Country[] = [
     { name: "United Kingdom", code: "GB", flag: "🇬🇧" },
     { name: "United States", code: "US", flag: "🇺🇸" },
     { name: "Canada", code: "CA", flag: "🇨🇦" },
@@ -65,12 +83,6 @@ export default function HomePage() {
     : countries;
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -84,12 +96,11 @@ export default function HomePage() {
     });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
   }, []);
 
-  const handleCountrySelect = (country) => {
+  const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
     setFormData({ ...formData, country: country.name });
     setCountrySearchOpen(false);
@@ -172,11 +183,11 @@ export default function HomePage() {
         sendToCountry: ''
       });
       setSelectedCountry(null);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus({
         type: 'error',
-        message: error.message || 'Something went wrong. Please try again.'
+        message: error instanceof Error ? error.message : 'Something went wrong. Please try again.'
       });
     } finally {
       setIsSubmitting(false);
@@ -203,12 +214,7 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-              className="text-center lg:text-left"
-            >
+            <FadeIn className="text-center lg:text-left">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-[1.15] tracking-tight break-words">
                 Bridging Hearts<br className="hidden sm:block" /> Across Continents
               </h1>
@@ -216,36 +222,31 @@ export default function HomePage() {
                 Your money travels fast. Your love travels faster.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <motion.button
+                <button
                   onClick={scrollToWaitlist}
-                  className="btn btn-primary group animate-button-pulse"
-                  whileHover={{ y: -2, boxShadow: "0px 8px 32px rgba(227, 178, 60, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="btn btn-primary group hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-200"
                 >
                   Join Waitlist
-                  <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
-                </motion.button>
-                <motion.button
-                  className="btn btn-outline"
-                  whileHover={{ y: -2, boxShadow: "0px 4px 16px rgba(45, 49, 66, 0.15)" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                </button>
+                <button
+                  className="btn btn-outline hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200"
                   onClick={scrollToHowItWorks}
                 >
                   How It Works
-                </motion.button>
+                </button>
               </div>
-            </motion.div>
+            </FadeIn>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              className="hidden lg:block relative h-[500px]"
-            >
-              <Globe width={600} height={600} />
-            </motion.div>
+            <FadeIn delay={200} className="hidden lg:block relative h-[500px]">
+              <Suspense fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+                </div>
+              }>
+                <Globe width={600} height={600} />
+              </Suspense>
+            </FadeIn>
           </div>
         </div>
       </section>

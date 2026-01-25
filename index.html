@@ -4,10 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MoneyHive Landing Page</title>
+    <title>MoneyHive - Send Money Home Fast</title>
+    
+    <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical font weights -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/favicon.svg.svg" as="image" type="image/svg+xml">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#E3B23C">
   </head>
   <body>
     <div id="root"></div>

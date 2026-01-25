@@ -1,6 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useTheme } from './theme-provider';
 
 interface GlobeProps {
   width?: number;
@@ -9,41 +8,67 @@ interface GlobeProps {
 
 export function Globe({ width = 600, height = 600 }: GlobeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
+  const [isVisible, setIsVisible] = useState(false);
   
+  // Intersection Observer for lazy initialization
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px', threshold: 0.1 }
+    );
+    
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+  
+  useEffect(() => {
+    if (!containerRef.current || !isVisible) return;
 
-    // Scene setup
+    // Scene setup with optimizations
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ 
-      antialias: true, 
+      antialias: false, // Disable antialiasing for performance
       alpha: true,
-      powerPreference: 'default', // Add explicit power preference
-      preserveDrawingBuffer: true // Help with context preservation
+      powerPreference: 'low-power', // Prefer integrated GPU for battery/performance
+      precision: 'lowp', // Lower precision for better performance
     });
     
+    // Set pixel ratio to max 1.5 for better performance on high-DPI screens
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     containerRef.current.appendChild(renderer.domElement);
 
-    // Create Earth sphere
-    const geometry = new THREE.SphereGeometry(5, 64, 64);
+    // Create Earth sphere with LOWER polygon count (32 instead of 64)
+    const geometry = new THREE.SphereGeometry(5, 32, 32);
     const textureLoader = new THREE.TextureLoader();
     
-    // Load textures
-    const earthTexture = textureLoader.load('https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg');
-    const bumpTexture = textureLoader.load('https://raw.githubusercontent.com/turban/webgl-earth/master/images/elev_bump_4k.jpg');
-    const specularTexture = textureLoader.load('https://raw.githubusercontent.com/turban/webgl-earth/master/images/water_4k.png');
+    // Load ONLY the main texture - skip bump and specular for performance
+    const earthTexture = textureLoader.load(
+      'https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg',
+      undefined,
+      undefined,
+      () => {
+        // Fallback to a simple colored material if texture fails
+        earth.material = new THREE.MeshPhongMaterial({
+          color: 0x2d3142,
+          shininess: 5
+        });
+      }
+    );
     
+    // Simpler material without bump/specular maps
     const material = new THREE.MeshPhongMaterial({
       map: earthTexture,
-      bumpMap: bumpTexture,
-      bumpScale: 0.1,
-      specularMap: specularTexture,
-      specular: new THREE.Color('grey'),
-      shininess: 10
+      shininess: 5
     });
 
     const earth = new THREE.Mesh(geometry, material);
@@ -152,6 +177,9 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
     let targetRotationSpeed = 0.001;
     let time = 0;
     let animationFrameId: number;
+    let lastFrame = 0;
+    const targetFPS = 30; // Limit to 30 FPS for better performance
+    const frameInterval = 1000 / targetFPS;
     
     // Handle hover interactions
     const handleMouseEnter = () => {
@@ -165,32 +193,43 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
     containerRef.current.addEventListener('mouseenter', handleMouseEnter);
     containerRef.current.addEventListener('mouseleave', handleMouseLeave);
 
-    // Animation loop
-    function animate() {
+    // Animation loop with FPS limiting
+    function animate(currentTime: number) {
       animationFrameId = requestAnimationFrame(animate);
-      time += 0.01;
+      
+      // Limit FPS
+      const delta = currentTime - lastFrame;
+      if (delta < frameInterval) return;
+      lastFrame = currentTime - (delta % frameInterval);
+      
+      time += 0.02; // Adjusted for 30fps
       
       rotationSpeed += (targetRotationSpeed - rotationSpeed) * 0.1;
       earth.rotation.y += rotationSpeed;
       pointsGroup.rotation.y += rotationSpeed;
       arcsGroup.rotation.y += rotationSpeed;
 
-      pointsGroup.children.forEach((child, index) => {
-        if (index % 2 === 1) {
-          child.scale.setScalar(1 + Math.sin(time + index) * 0.3);
-          (child.material as THREE.MeshBasicMaterial).opacity = 
-            0.4 * (1 + Math.sin(time + index)) / 2;
-        }
-      });
+      // Simplified animations - update every other frame
+      if (Math.floor(time * 10) % 2 === 0) {
+        pointsGroup.children.forEach((child, index) => {
+          if (index % 2 === 1 && child instanceof THREE.Mesh) {
+            child.scale.setScalar(1 + Math.sin(time + index) * 0.3);
+            if (child.material instanceof THREE.MeshBasicMaterial) {
+              child.material.opacity = 0.4 * (1 + Math.sin(time + index)) / 2;
+            }
+          }
+        });
 
-      arcsGroup.children.forEach((arc, index) => {
-        (arc.material as THREE.LineBasicMaterial).opacity = 
-          0.6 * (0.5 + Math.sin(time + index) * 0.5);
-      });
+        arcsGroup.children.forEach((arc, index) => {
+          if (arc instanceof THREE.Line && arc.material instanceof THREE.LineBasicMaterial) {
+            arc.material.opacity = 0.6 * (0.5 + Math.sin(time + index) * 0.5);
+          }
+        });
+      }
       
       renderer.render(scene, camera);
     }
-    animate();
+    animate(0);
 
     // Handle resize
     const handleResize = () => {
@@ -204,6 +243,9 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
 
     window.addEventListener('resize', handleResize);
 
+    // Store ref value for cleanup
+    const container = containerRef.current;
+
     // Cleanup
     return () => {
       // Cancel animation frame
@@ -212,10 +254,12 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
       }
 
       // Remove event listeners
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('mouseenter', handleMouseEnter);
-        containerRef.current.removeEventListener('mouseleave', handleMouseLeave);
-        containerRef.current.removeChild(renderer.domElement);
+      if (container) {
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
+        if (renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
       }
       window.removeEventListener('resize', handleResize);
 
@@ -223,8 +267,6 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
       geometry.dispose();
       material.dispose();
       earthTexture.dispose();
-      bumpTexture.dispose();
-      specularTexture.dispose();
       pointGeometry.dispose();
       pointMaterial.dispose();
       
@@ -253,12 +295,14 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
       // Dispose of renderer
       renderer.dispose();
       
-      // Force garbage collection
-      renderer.forceContextLoss();
-      renderer.context = null;
-      renderer.domElement = null;
+      // Force context loss for cleanup
+      try {
+        renderer.forceContextLoss();
+      } catch {
+        // Ignore errors during cleanup
+      }
     };
-  }, [width, height]);
+  }, [width, height, isVisible]);
 
   return (
     <div 
@@ -268,6 +312,13 @@ export function Globe({ width = 600, height = 600 }: GlobeProps) {
         maxWidth: width,
         maxHeight: height
       }}
-    />
+    >
+      {/* Placeholder while loading */}
+      {!isVisible && (
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-supporting/5 rounded-full">
+          <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
+      )}
+    </div>
   );
 }
