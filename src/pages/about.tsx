@@ -171,37 +171,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="py-16 bg-white dark:bg-foundation-dark">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Our Leadership Team</h2>
-              <p className="text-secondary/80 dark:text-foundation-light/80">
-                Meet the team building the hive 🐝
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-              {[
-                { name: "Deji Jegede", title: "Co-Founder & Head of Product and Operations" },
-                { name: "John Doherty", title: "Co-Founder & Head of Engineering" },
-                { name: "Chibundu Obidegwu", title: "Co-Founder & Head of Legal, Compliance and Data Governance" },
-                { name: "AI Tools", title: "Co-Founder & Chief Automation Officer" },
-              ].map((member, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
-                  <div className="w-40 h-40 bg-gradient-to-br from-primary/20 to-supporting/20 dark:from-primary/10 dark:to-supporting/10 rounded-full mb-4 flex items-center justify-center">
-                    <span className="text-4xl">{index === 3 ? '🤖' : '👤'}</span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-secondary dark:text-foundation-light">{member.name}</h3>
-                  <p className="text-secondary/80 dark:text-foundation-light/80">{member.title}</p>
-                  {index === 3 && (
-                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-2 italic">Yes, really. We believe in AI-first collaboration for better speed, design, and scale</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-primary to-primary">
           <div className="container mx-auto px-4">

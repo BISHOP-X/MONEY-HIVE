@@ -209,8 +209,8 @@ export default function HomePage() {
               transition={{ duration: 0.8, ease: "easeInOut" }}
               className="text-center lg:text-left"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-[3.2rem] lg:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-tight">
-                Bridging Hearts Across Continents
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-[1.15] tracking-tight break-words">
+                Bridging Hearts<br className="hidden sm:block" /> Across Continents
               </h1>
               <p className="text-lg sm:text-xl md:text-2xl text-primary dark:text-primary mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0 font-jakarta">
                 Your money travels fast. Your love travels faster.

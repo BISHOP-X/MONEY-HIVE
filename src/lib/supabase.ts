@@ -61,3 +61,52 @@ export async function checkWaitlistEmail(email: string) {
 
   return !!data;
 }
+
+// CV Submissions for Careers page
+export async function submitCV(data: {
+  full_name: string;
+  email: string;
+  phone?: string;
+  linkedin_url?: string;
+  portfolio_url?: string;
+  cover_letter?: string;
+  cv_filename?: string;
+}) {
+  const { error } = await supabase
+    .from('cv_submissions')
+    .insert([{
+      ...data,
+      submitted_at: new Date().toISOString()
+    }]);
+
+  if (error) {
+    if (error.code === '23505') {
+      throw new Error('You have already submitted your CV with this email!');
+    }
+    throw error;
+  }
+
+  return { success: true };
+}
+
+// Contact/Enquiry submissions
+export async function submitEnquiry(data: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  const { error } = await supabase
+    .from('enquiries')
+    .insert([{
+      ...data,
+      submitted_at: new Date().toISOString()
+    }]);
+
+  if (error) {
+    throw error;
+  }
+
+  return { success: true };
+}

@@ -1,8 +1,57 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { submitEnquiry } from "@/lib/supabase";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      await submitEnquiry({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your message! We will get back to you as soon as possible.'
+      });
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        subject: '',
+        message: '',
+      });
+    } catch (error: any) {
+      setSubmitStatus({
+        type: 'error',
+        message: error.message || 'Something went wrong. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark">
       <Header />
@@ -16,23 +65,29 @@ export default function ContactPage() {
               </p>
               
               <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8">
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-secondary/80 dark:text-foundation-light/80 mb-2">
-                        First Name
+                        First Name *
                       </label>
                       <input
                         type="text"
+                        required
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                         className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-secondary/80 dark:text-foundation-light/80 mb-2">
-                        Last Name
+                        Last Name *
                       </label>
                       <input
                         type="text"
+                        required
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
                         className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light"
                       />
                     </div>
@@ -40,42 +95,77 @@ export default function ContactPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-secondary/80 dark:text-foundation-light/80 mb-2">
-                      Email Address
+                      Email Address *
                     </label>
                     <input
                       type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light"
                     />
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-secondary/80 dark:text-foundation-light/80 mb-2">
-                      Subject
+                      Subject *
                     </label>
-                    <select className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light">
+                    <select 
+                      required
+                      value={formData.subject}
+                      onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                      className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light"
+                    >
                       <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Technical Support</option>
-                      <option value="business">Business Partnership</option>
-                      <option value="press">Press Inquiry</option>
+                      <option value="General Inquiry">General Inquiry</option>
+                      <option value="Technical Support">Technical Support</option>
+                      <option value="Business Partnership">Business Partnership</option>
+                      <option value="Press Inquiry">Press Inquiry</option>
                     </select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-secondary/80 dark:text-foundation-light/80 mb-2">
-                      Message
+                      Message *
                     </label>
                     <textarea
                       rows={6}
+                      required
+                      value={formData.message}
+                      onChange={(e) => setFormData({...formData, message: e.target.value})}
                       className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent bg-white dark:bg-slate-700 text-secondary dark:text-foundation-light"
                     ></textarea>
                   </div>
+
+                  {/* Status Messages */}
+                  {submitStatus && (
+                    <div className={`p-4 rounded-lg flex items-center gap-3 ${
+                      submitStatus.type === 'success' 
+                        ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                    }`}>
+                      {submitStatus.type === 'success' ? (
+                        <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      )}
+                      {submitStatus.message}
+                    </div>
+                  )}
                   
                   <Button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary/90 text-secondary font-semibold py-3 hover:shadow-button-hover transition-all duration-300"
+                    disabled={isSubmitting}
+                    className="w-full bg-primary hover:bg-primary/90 text-secondary font-semibold py-3 hover:shadow-button-hover transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      'Send Message'
+                    )}
                   </Button>
                 </form>
               </div>

@@ -2,9 +2,13 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { submitCV } from "@/lib/supabase";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function CareersPage() {
   const [showCVForm, setShowCVForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -21,21 +25,49 @@ export default function CareersPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the form submission
-    console.log('Form submitted:', formData);
-    alert('Thank you for your application! We will review your CV and get back to you soon.');
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      linkedIn: '',
-      portfolio: '',
-      coverLetter: '',
-      cv: null,
-    });
-    setShowCVForm(false);
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      await submitCV({
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        linkedin_url: formData.linkedIn || undefined,
+        portfolio_url: formData.portfolio || undefined,
+        cover_letter: formData.coverLetter || undefined,
+        cv_filename: formData.cv?.name || undefined,
+      });
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your application! We will review your CV and get back to you soon.'
+      });
+
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        linkedIn: '',
+        portfolio: '',
+        coverLetter: '',
+        cv: null,
+      });
+
+      setTimeout(() => {
+        setShowCVForm(false);
+        setSubmitStatus(null);
+      }, 3000);
+    } catch (error: any) {
+      setSubmitStatus({
+        type: 'error',
+        message: error.message || 'Something went wrong. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -169,20 +201,45 @@ export default function CareersPage() {
                     </p>
                   </div>
 
+                  {/* Status Messages */}
+                  {submitStatus && (
+                    <div className={`p-4 rounded-lg flex items-center gap-3 ${
+                      submitStatus.type === 'success' 
+                        ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                    }`}>
+                      {submitStatus.type === 'success' ? (
+                        <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      )}
+                      {submitStatus.message}
+                    </div>
+                  )}
+
                   <div className="flex justify-end space-x-4">
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => setShowCVForm(false)}
+                      disabled={isSubmitting}
                       className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-primary hover:bg-primary/90 text-secondary"
+                      disabled={isSubmitting}
+                      className="bg-primary hover:bg-primary/90 text-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Submit Application
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        'Submit Application'
+                      )}
                     </Button>
                   </div>
                 </form>
@@ -268,55 +325,24 @@ export default function CareersPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-center mb-12 text-secondary dark:text-foundation-light">Open Positions</h2>
-              <div className="space-y-6">
-                {[
-                  {
-                    title: "Senior Full Stack Engineer",
-                    department: "Engineering",
-                    location: "Remote",
-                    type: "Full-time",
-                  },
-                  {
-                    title: "Product Manager",
-                    department: "Product",
-                    location: "London, UK",
-                    type: "Full-time",
-                  },
-                  {
-                    title: "Growth Marketing Manager",
-                    department: "Marketing",
-                    location: "Remote",
-                    type: "Full-time",
-                  },
-                  {
-                    title: "Customer Success Manager",
-                    department: "Operations",
-                    location: "Remote",
-                    type: "Full-time",
-                  },
-                ].map((position, index) => (
-                  <div
-                    key={index}
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-primary dark:hover:border-primary transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2 text-secondary dark:text-foundation-light">
-                          {position.title}
-                        </h3>
-                        <p className="text-secondary/80 dark:text-foundation-light/80">
-                          {position.department} · {position.location} · {position.type}
-                        </p>
-                      </div>
-                      <Button 
-                        onClick={() => setShowCVForm(true)}
-                        className="bg-primary hover:bg-primary/90 text-secondary"
-                      >
-                        Apply Now
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+              
+              {/* No Open Positions Message */}
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-12 text-center">
+                <div className="w-20 h-20 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-4xl">🐝</span>
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 text-secondary dark:text-foundation-light">
+                  No Open Positions at the Moment
+                </h3>
+                <p className="text-secondary/80 dark:text-foundation-light/80 max-w-lg mx-auto mb-8">
+                  We don't have any open positions right now, but we're always looking for talented people who share our vision. Send us your CV and we'll reach out when the right opportunity comes up.
+                </p>
+                <Button 
+                  onClick={() => setShowCVForm(true)}
+                  className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-8 py-4 text-lg"
+                >
+                  Send Your CV Anyway
+                </Button>
               </div>
             </div>
           </div>
@@ -327,7 +353,7 @@ export default function CareersPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-white mb-6">
-                Don't see the right role?
+                Interested in Joining the Hive?
               </h2>
               <p className="text-white/90 text-lg mb-8">
                 We're always looking for talented people to join our team. Send us your CV and we'll keep you in mind for future opportunities.

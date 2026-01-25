@@ -4,6 +4,10 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function BusinessPage() {
+  const scrollToWaitlist = () => {
+    window.location.href = '/#waitlist-section';
+  };
+
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark">
       <Header />
@@ -13,16 +17,23 @@ export default function BusinessPage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="max-w-xl space-y-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-4">
+                  <span className="mr-2">🚀</span> Coming Soon
+                </div>
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-secondary dark:text-foundation-light">
                   Business Solutions for
                   <span className="text-primary block">Global Payments</span>
                 </h1>
                 <p className="text-lg text-secondary/80 dark:text-foundation-light/80">
-                  Streamline your international payments with MoneyHive Business. Send money to employees, contractors, and suppliers in over 100 countries at competitive rates.
+                  We're building powerful business payment solutions to help you pay employees, contractors, and suppliers across borders. Be the first to know when we launch.
                 </p>
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-8 py-4 text-lg hover:shadow-button-hover transition-all duration-300">
-                    Contact Sales
+                  <Button 
+                    onClick={scrollToWaitlist}
+                    size="lg" 
+                    className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-8 py-4 text-lg hover:shadow-button-hover transition-all duration-300"
+                  >
+                    Join the Waitlist
                   </Button>
                   <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 font-semibold px-8 py-4 text-lg transition-all duration-300">
                     Learn More
@@ -30,7 +41,11 @@ export default function BusinessPage() {
                 </div>
               </div>
               <div className="lg:h-[450px] bg-gradient-to-br from-primary/10 to-supporting/10 rounded-lg flex items-center justify-center">
-                <span className="text-secondary/50 dark:text-foundation-light/50 text-lg">Business Image Placeholder</span>
+                <div className="text-center p-8">
+                  <span className="text-6xl mb-4 block">🏢</span>
+                  <p className="text-secondary/70 dark:text-foundation-light/70 text-lg font-medium">Business Solutions</p>
+                  <p className="text-primary font-semibold">Coming Q3 2026</p>
+                </div>
               </div>
             </div>
           </div>
@@ -40,9 +55,9 @@ export default function BusinessPage() {
         <section className="py-20 bg-white dark:bg-slate-900">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Tailored Services for Your Business</h2>
+              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">What We're Building for Businesses</h2>
               <p className="text-lg text-secondary/80 dark:text-foundation-light/80 max-w-2xl mx-auto">
-                From small businesses to large enterprises, we offer solutions that scale with your needs.
+                Powerful tools designed to simplify your international payment operations.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -51,8 +66,8 @@ export default function BusinessPage() {
                   title: "Global Payroll",
                   description: "Pay your remote employees and contractors in their local currency, with transparent fees and competitive exchange rates.",
                   icon: (
-                    <svg className="h-10 w-10 text-primary\" fill="none\" stroke="currentColor\" viewBox="0 0 24 24\" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round\" strokeLinejoin="round\" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <svg className="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   ),
                 },
@@ -67,7 +82,7 @@ export default function BusinessPage() {
                 },
                 {
                   title: "Mass Payments",
-                  description: "Send multiple payments at once with our batch processing feature, saving time and reducing administrative overhead.",
+                  description: "Send multiple payments at once with batch processing, saving time and reducing administrative overhead.",
                   icon: (
                     <svg className="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -93,24 +108,24 @@ export default function BusinessPage() {
         <section className="py-20 bg-slate-50 dark:bg-slate-800">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Why Businesses Choose MoneyHive</h2>
+              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Why Businesses Will Choose MoneyHive</h2>
               <p className="text-lg text-secondary/80 dark:text-foundation-light/80 max-w-2xl mx-auto">
-                Join thousands of businesses that trust MoneyHive for their international payment needs.
+                We're building the features that matter most to growing businesses.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 {
-                  title: "Up to 90% Cost Savings",
-                  description: "Save on international transfer fees compared to traditional banks.",
+                  title: "Up to 70% Cost Savings",
+                  description: "Save significantly on international transfer fees compared to traditional banks.",
                 },
                 {
                   title: "Real-time Tracking",
                   description: "Track your payments in real-time from initiation to receipt.",
                 },
                 {
-                  title: "Dedicated Account Manager",
-                  description: "Get personalized support from a dedicated account manager.",
+                  title: "Dedicated Support",
+                  description: "Get personalized support from our business solutions team.",
                 },
                 {
                   title: "API Integration",
@@ -126,7 +141,7 @@ export default function BusinessPage() {
                 },
                 {
                   title: "Multi-currency Accounts",
-                  description: "Hold balances in multiple currencies to avoid conversion fees.",
+                  description: "Hold balances in multiple currencies to optimize conversion costs.",
                 },
                 {
                   title: "Custom Reporting",
@@ -142,111 +157,61 @@ export default function BusinessPage() {
           </div>
         </section>
 
-        {/* API Section */}
+        {/* Roadmap Section */}
         <section className="py-20 bg-white dark:bg-foundation-dark">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1">
-                <div className="bg-secondary dark:bg-slate-800 p-6 rounded-lg text-foundation-light font-mono text-sm overflow-x-auto">
-                  <pre>{`// Example API request
-const response = await fetch('https://api.moneyhive.com/v1/transfers', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    source: { type: 'business_account', id: 'ba_123' },
-    destination: { type: 'bank_account', id: 'ba_456' },
-    amount: 1000,
-    currency: 'USD',
-    reference: 'Invoice #123'
-  })
-});
-
-const data = await response.json();
-console.log(data);`}</pre>
-                </div>
-              </div>
-              <div className="order-1 lg:order-2 max-w-xl">
-                <h2 className="text-3xl font-bold mb-6 text-secondary dark:text-foundation-light">Powerful API for Seamless Integration</h2>
-                <p className="text-lg text-secondary/80 dark:text-foundation-light/80 mb-6">
-                  Our RESTful API allows you to integrate international payments directly into your existing systems and workflows. Automate your payment processes and reduce manual intervention.
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">Our Business Roadmap</h2>
+                <p className="text-lg text-secondary/80 dark:text-foundation-light/80">
+                  Here's what we're working on to serve businesses better.
                 </p>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-secondary/80 dark:text-foundation-light/80">
-                    <svg className="h-5 w-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Comprehensive documentation
-                  </li>
-                  <li className="flex items-center text-secondary/80 dark:text-foundation-light/80">
-                    <svg className="h-5 w-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Sandbox environment for testing
-                  </li>
-                  <li className="flex items-center text-secondary/80 dark:text-foundation-light/80">
-                    <svg className="h-5 w-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    SDKs for popular languages
-                  </li>
-                  <li className="flex items-center text-secondary/80 dark:text-foundation-light/80">
-                    <svg className="h-5 w-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Webhook notifications
-                  </li>
-                </ul>
-                <Button className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-6 py-3 hover:shadow-button-hover transition-all duration-300">
-                  View API Documentation
-                </Button>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="py-20 bg-slate-50 dark:bg-slate-800">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-secondary dark:text-foundation-light">What Our Business Clients Say</h2>
-              <p className="text-lg text-secondary/80 dark:text-foundation-light/80 max-w-2xl mx-auto">
-                Don't just take our word for it. Here's what businesses using our platform have to say.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  quote: "MoneyHive has revolutionized how we pay our remote team members across 12 countries. The process is now seamless and we've saved thousands in fees.",
-                  author: "Sarah Chen",
-                  title: "CFO, TechGrowth Inc.",
-                },
-                {
-                  quote: "The API integration was straightforward and our developers had it up and running in days. Now our payment system is fully automated.",
-                  author: "Mark Johnson",
-                  title: "CTO, GlobalTrade Ltd.",
-                },
-                {
-                  quote: "Our suppliers love getting paid in their local currency, and we love the competitive exchange rates. It's a win-win situation.",
-                  author: "Elena Rodriguez",
-                  title: "Operations Director, Nexus Supplies",
-                },
-              ].map((testimonial, index) => (
-                <Card key={index} className="border-none shadow-md bg-white dark:bg-slate-700/50">
-                  <CardContent className="p-6">
-                    <svg className="h-8 w-8 text-primary mb-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                    </svg>
-                    <p className="text-secondary/80 dark:text-foundation-light/80 mb-6 italic">"{testimonial.quote}"</p>
-                    <div>
-                      <p className="font-semibold text-secondary dark:text-foundation-light">{testimonial.author}</p>
-                      <p className="text-sm text-secondary/60 dark:text-foundation-light/60">{testimonial.title}</p>
+              <div className="space-y-8">
+                {[
+                  {
+                    phase: "Phase 1 (Now)",
+                    title: "Consumer Remittance Launch",
+                    description: "Establishing our UK to Nigeria corridor with fast, affordable transfers for individuals.",
+                    status: "In Progress",
+                  },
+                  {
+                    phase: "Phase 2 (2026)",
+                    title: "Business Payment Solutions",
+                    description: "Launching bulk payments, supplier payments, and dedicated business accounts.",
+                    status: "Planned",
+                  },
+                  {
+                    phase: "Phase 3 (2027+)",
+                    title: "API & Enterprise Features",
+                    description: "Full API access, custom integrations, and enterprise-grade features for larger organizations.",
+                    status: "Future",
+                  },
+                ].map((item, index) => (
+                  <div key={index} className="flex gap-6">
+                    <div className="flex flex-col items-center">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
+                        item.status === 'In Progress' ? 'bg-primary' : 
+                        item.status === 'Planned' ? 'bg-supporting' : 'bg-slate-400'
+                      }`}>
+                        {index + 1}
+                      </div>
+                      {index < 2 && <div className="w-0.5 h-full bg-slate-200 dark:bg-slate-700 mt-2"></div>}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <div className="flex-1 pb-8">
+                      <span className="text-sm font-medium text-primary">{item.phase}</span>
+                      <h3 className="text-xl font-semibold text-secondary dark:text-foundation-light mt-1">{item.title}</h3>
+                      <p className="text-secondary/80 dark:text-foundation-light/80 mt-2">{item.description}</p>
+                      <span className={`inline-block mt-3 px-3 py-1 rounded-full text-sm font-medium ${
+                        item.status === 'In Progress' ? 'bg-primary/10 text-primary' : 
+                        item.status === 'Planned' ? 'bg-supporting/10 text-supporting' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                      }`}>
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -255,18 +220,17 @@ console.log(data);`}</pre>
         <section className="py-20 bg-gradient-to-r from-primary to-primary">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Simplify Your Global Payments?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Be the First to Access Business Solutions</h2>
               <p className="text-xl text-white/90 mb-8">
-                Join thousands of businesses that trust MoneyHive for their international payment needs.
+                Join our waitlist and we'll notify you as soon as business features are available.
               </p>
-              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button size="lg" className="bg-white hover:bg-gray-100 text-secondary font-semibold px-8 py-4 text-lg hover:shadow-lg transition-all duration-300">
-                  Schedule a Demo
-                </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold px-8 py-4 text-lg transition-all duration-300">
-                  Contact Sales
-                </Button>
-              </div>
+              <Button 
+                onClick={scrollToWaitlist}
+                size="lg" 
+                className="bg-white hover:bg-gray-100 text-secondary font-semibold px-8 py-4 text-lg hover:shadow-lg transition-all duration-300"
+              >
+                Join the Waitlist
+              </Button>
             </div>
           </div>
         </section>
