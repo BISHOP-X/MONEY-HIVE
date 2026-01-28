@@ -73,9 +73,9 @@ export default function CareersPage() {
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark">
       <Header />
-      <div className="pt-20">
+      <div>
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-800 dark:via-foundation-dark dark:to-foundation-dark">
+        <section className="pt-28 pb-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-900 dark:via-foundation-dark dark:to-foundation-dark">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Join Our Mission</h1>

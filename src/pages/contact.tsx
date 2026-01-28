@@ -55,8 +55,8 @@ export default function ContactPage() {
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark">
       <Header />
-      <div className="pt-20 flex-grow">
-        <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-800 dark:via-foundation-dark dark:to-foundation-dark">
+      <div className="flex-grow">
+        <section className="pt-28 pb-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-900 dark:via-foundation-dark dark:to-foundation-dark">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Contact Us</h1>

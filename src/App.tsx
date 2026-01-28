@@ -38,13 +38,14 @@ const PageLoader = () => (
   </div>
 );
 
-// Page transition wrapper
+// Page transition wrapper - subtle fade without color flash
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0 }}
+    initial={{ opacity: 0.95 }}
     animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.15, ease: 'easeInOut' }}
+    exit={{ opacity: 0.95 }}
+    transition={{ duration: 0.1, ease: 'linear' }}
+    className="bg-foundation-light dark:bg-foundation-dark"
   >
     {children}
   </motion.div>

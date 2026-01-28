@@ -11,9 +11,9 @@ export default function BusinessPage() {
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark">
       <Header />
-      <div className="pt-16 pb-20">
+      <div className="pb-20">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-800 dark:via-foundation-dark dark:to-foundation-dark py-20">
+        <section className="relative bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-900 dark:via-foundation-dark dark:to-foundation-dark pt-28 pb-20">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="max-w-xl space-y-6">

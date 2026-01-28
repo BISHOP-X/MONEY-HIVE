@@ -106,9 +106,9 @@ export default function BlogPage() {
   return (
     <main className="flex min-h-screen flex-col bg-foundation-light dark:bg-foundation-dark mode-transition">
       <Header />
-      <div className="pt-16 pb-20">
+      <div className="pb-20">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-800 dark:via-foundation-dark dark:to-foundation-dark mode-transition">
+        <section className="pt-28 pb-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-900 dark:via-foundation-dark dark:to-foundation-dark mode-transition">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <motion.h1 
