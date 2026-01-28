@@ -1,5 +1,4 @@
 import { ArrowRight } from 'lucide-react';
-import { Globe } from './Globe';
 import { motion } from 'framer-motion';
 
 export function Hero() {
@@ -62,9 +61,14 @@ export function Hero() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
-            className="hidden lg:block relative h-[500px]"
+            className="hidden lg:flex relative h-[500px] items-center justify-center"
           >
-            <Globe width={600} height={600} />
+            <img 
+              src="/hero-image.png" 
+              alt="Send money home with MoneyHive" 
+              className="max-w-full max-h-full object-contain drop-shadow-2xl"
+              loading="eager"
+            />
           </motion.div>
         </div>
       </div>

@@ -28,7 +28,6 @@ export default defineConfig({
         manualChunks: {
           // Vendor chunks - split heavy dependencies
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-three': ['three'],
           'vendor-motion': ['framer-motion'],
           'vendor-ui': ['@radix-ui/react-dropdown-menu', '@radix-ui/react-slot', 'lucide-react'],
           'vendor-supabase': ['@supabase/supabase-js'],

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, ArrowRight, Globe2, Banknote, Lock, Smartphone, QrCode, Loader2, CheckCircle, X, AlertCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Footer } from "@/components/Footer";
@@ -8,9 +8,6 @@ import { LetterFromHome } from "@/components/LetterFromHome";
 import { AppStoreBadges } from "@/components/AppStoreBadges";
 import { SocialProof } from "@/components/SocialProof";
 import { addToWaitlist } from "@/lib/supabase";
-
-// Lazy load the heavy Globe component
-const Globe = lazy(() => import("@/components/Globe").then(m => ({ default: m.Globe })));
 
 // Simple fade-in animation component using CSS
 const FadeIn = ({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) => (
@@ -238,14 +235,14 @@ export default function HomePage() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={200} className="hidden lg:block relative h-[500px]">
-              <Suspense fallback={
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-                </div>
-              }>
-                <Globe width={600} height={600} />
-              </Suspense>
+            {/* Hero Image */}
+            <FadeIn delay={200} className="hidden lg:flex relative h-[500px] items-center justify-center">
+              <img 
+                src="/hero-image.png" 
+                alt="Send money home with MoneyHive" 
+                className="max-w-full max-h-full object-contain drop-shadow-2xl"
+                loading="eager"
+              />
             </FadeIn>
           </div>
         </div>
