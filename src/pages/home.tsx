@@ -238,7 +238,7 @@ export default function HomePage() {
             {/* Hero Image */}
             <FadeIn delay={200} className="hidden lg:flex relative h-[500px] items-center justify-center">
               <img 
-                src="/hero-image.png" 
+                src="/MONEY-HIVE-HERO.png" 
                 alt="Send money home with MoneyHive" 
                 className="max-w-full max-h-full object-contain drop-shadow-2xl"
                 loading="eager"

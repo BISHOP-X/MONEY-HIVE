@@ -1,5 +1,6 @@
 import { useEffect, Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeProvider } from './components/theme-provider';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ProtectedRoute, PreviewOnlyRoute } from './components/ProtectedRoute';
@@ -37,6 +38,96 @@ const PageLoader = () => (
   </div>
 );
 
+// Page transition wrapper
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.15, ease: 'easeInOut' }}
+  >
+    {children}
+  </motion.div>
+);
+
+// Animated Routes component
+function AnimatedRoutes() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* ============================================
+            PUBLIC PAGES - Always visible to everyone
+            ============================================ */}
+        <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+        <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+        <Route path="/business" element={<PageWrapper><BusinessPage /></PageWrapper>} />
+        <Route path="/blog" element={<PageWrapper><BlogPage /></PageWrapper>} />
+        <Route path="/careers" element={<PageWrapper><CareersPage /></PageWrapper>} />
+        <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+        <Route path="/legal/terms" element={<PageWrapper><TermsPage /></PageWrapper>} />
+        <Route path="/legal/privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
+        <Route path="/legal/cookies" element={<PageWrapper><CookiesPage /></PageWrapper>} />
+
+        {/* ============================================
+            PREVIEW-ONLY PAGES - Auth pages for testing
+            In public mode: redirects to /
+            In preview mode: shows login/signup
+            ============================================ */}
+        <Route path="/login" element={
+          <PageWrapper>
+            <PreviewOnlyRoute>
+              <LoginPage />
+            </PreviewOnlyRoute>
+          </PageWrapper>
+        } />
+        <Route path="/signup" element={
+          <PageWrapper>
+            <PreviewOnlyRoute>
+              <SignupPage />
+            </PreviewOnlyRoute>
+          </PageWrapper>
+        } />
+
+        {/* ============================================
+            PROTECTED PAGES - Internal app pages
+            In public mode: redirects to /
+            In preview mode: full access for testing
+            ============================================ */}
+        <Route path="/dashboard" element={
+          <PageWrapper>
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          </PageWrapper>
+        } />
+        <Route path="/send-money" element={
+          <PageWrapper>
+            <ProtectedRoute>
+              <SendMoneyPage />
+            </ProtectedRoute>
+          </PageWrapper>
+        } />
+        <Route path="/pay-bills" element={
+          <PageWrapper>
+            <ProtectedRoute>
+              <PayBillsPage />
+            </ProtectedRoute>
+          </PageWrapper>
+        } />
+        <Route path="/verify" element={
+          <PageWrapper>
+            <ProtectedRoute>
+              <VerifyPage />
+            </ProtectedRoute>
+          </PageWrapper>
+        } />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 /**
  * TWO-MODE SYSTEM:
  * 
@@ -73,62 +164,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* ============================================
-                PUBLIC PAGES - Always visible to everyone
-                ============================================ */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/business" element={<BusinessPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/careers" element={<CareersPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/legal/terms" element={<TermsPage />} />
-            <Route path="/legal/privacy" element={<PrivacyPage />} />
-            <Route path="/legal/cookies" element={<CookiesPage />} />
-
-            {/* ============================================
-                PREVIEW-ONLY PAGES - Auth pages for testing
-                In public mode: redirects to /
-                In preview mode: shows login/signup
-                ============================================ */}
-            <Route path="/login" element={
-              <PreviewOnlyRoute>
-                <LoginPage />
-              </PreviewOnlyRoute>
-            } />
-            <Route path="/signup" element={
-              <PreviewOnlyRoute>
-                <SignupPage />
-              </PreviewOnlyRoute>
-            } />
-
-            {/* ============================================
-                PROTECTED PAGES - Internal app pages
-                In public mode: redirects to /
-                In preview mode: full access for testing
-                ============================================ */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/send-money" element={
-              <ProtectedRoute>
-                <SendMoneyPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/pay-bills" element={
-              <ProtectedRoute>
-                <PayBillsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/verify" element={
-              <ProtectedRoute>
-                <VerifyPage />
-              </ProtectedRoute>
-            } />
-          </Routes>
+          <AnimatedRoutes />
         </Suspense>
       </Router>
     </ThemeProvider>
