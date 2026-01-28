@@ -200,18 +200,18 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-foundation-light to-white dark:from-foundation-dark dark:to-slate-900 mode-transition">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-foundation-light to-white dark:from-foundation-dark dark:to-slate-900 mode-transition">
       <Header />
 
       {/* Hero Section with Globe */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden w-full">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 dark:from-primary/10 dark:to-accent/10 backdrop-blur-3xl" />
           <div className="absolute inset-0 mix-blend-multiply bg-gradient-to-b from-transparent via-foundation-light to-foundation-light dark:via-foundation-dark dark:to-foundation-dark" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="container mx-auto px-4 sm:px-6 z-10 w-full max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
             <FadeIn className="text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-[1.15] tracking-tight">
                 Bridging Hearts<br className="hidden sm:block" /> Across Continents
