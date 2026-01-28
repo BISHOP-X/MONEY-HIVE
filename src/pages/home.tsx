@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
-import { LetterFromHome } from "@/components/LetterFromHome";
 import { AppStoreBadges } from "@/components/AppStoreBadges";
 import { SocialProof } from "@/components/SocialProof";
 import { addToWaitlist } from "@/lib/supabase";
@@ -209,25 +208,25 @@ export default function HomePage() {
           <div className="absolute inset-0 mix-blend-multiply bg-gradient-to-b from-transparent via-foundation-light to-foundation-light dark:via-foundation-dark dark:to-foundation-dark" />
         </div>
 
-        <div className="container mx-auto px-4 z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto px-4 sm:px-6 z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <FadeIn className="text-center lg:text-left">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-[1.15] tracking-tight break-words">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-[3.8rem] font-bold mb-4 md:mb-6 text-secondary dark:text-foundation-light font-jakarta leading-[1.15] tracking-tight">
                 Bridging Hearts<br className="hidden sm:block" /> Across Continents
               </h1>
               <p className="text-lg sm:text-xl md:text-2xl text-primary dark:text-primary mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0 font-jakarta">
                 Your money travels fast. Your love travels faster.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <button
                   onClick={scrollToWaitlist}
-                  className="btn btn-primary group hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-200"
+                  className="btn btn-primary group hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-200 w-full sm:w-auto"
                 >
                   Join Waitlist
                   <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </button>
                 <button
-                  className="btn btn-outline hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200"
+                  className="btn btn-outline hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200 w-full sm:w-auto"
                   onClick={scrollToHowItWorks}
                 >
                   How It Works
@@ -272,7 +271,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
             <motion.div
               className="bg-white dark:bg-slate-700/50 p-8 rounded-2xl consistent-hover shadow-lg"
               initial={{ opacity: 0, y: 30 }}
@@ -803,7 +802,6 @@ export default function HomePage() {
       </section>
 
       <Footer />
-      <LetterFromHome position="right" />
 
       {/* Success Modal Popup */}
       <AnimatePresence>
