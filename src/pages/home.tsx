@@ -105,7 +105,9 @@ export default function HomePage() {
   const scrollToHowItWorks = () => {
     const howItWorksSection = document.getElementById('how-it-works-section');
     if (howItWorksSection) {
-      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+      const yOffset = -80; // Offset for fixed header
+      const y = howItWorksSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
