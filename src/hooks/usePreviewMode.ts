@@ -4,6 +4,31 @@ const PREVIEW_KEY = 'moneyhive2024';
 const STORAGE_KEY = 'moneyhive-preview-mode';
 
 /**
+ * Check preview mode synchronously (for initial state)
+ */
+function getInitialPreviewMode(): boolean {
+  // Check if we're on localhost (always preview mode)
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return true;
+    }
+    
+    // Check URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('preview') === PREVIEW_KEY) {
+      return true;
+    }
+    
+    // Check localStorage
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Preview Mode Hook
  * 
  * AUTO-ENABLED ON:
@@ -15,7 +40,8 @@ const STORAGE_KEY = 'moneyhive-preview-mode';
  * - Persists in localStorage after first activation
  */
 export function usePreviewMode() {
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  // Initialize synchronously to avoid flash/redirect issues
+  const [isPreviewMode, setIsPreviewMode] = useState(getInitialPreviewMode);
 
   useEffect(() => {
     const hostname = window.location.hostname;

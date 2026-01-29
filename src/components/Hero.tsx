@@ -1,7 +1,13 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { usePreviewMode } from '@/hooks/usePreviewMode';
+import { useStakeholderAuth } from '@/hooks/useStakeholderAuth';
 
 export function Hero() {
+  const { isPreviewMode } = usePreviewMode();
+  const { isAuthenticated } = useStakeholderAuth();
+
   const scrollToWaitlist = () => {
     const waitlistSection = document.getElementById('waitlist-section');
     if (waitlistSection) {
@@ -13,6 +19,44 @@ export function Hero() {
     const howItWorksSection = document.getElementById('how-it-works-section');
     if (howItWorksSection) {
       howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Determine CTA based on mode and auth state
+  const renderCTA = () => {
+    if (isPreviewMode && isAuthenticated) {
+      // Logged in stakeholder: Go to Dashboard
+      return (
+        <Link 
+          to="/dashboard"
+          className="btn btn-primary group animate-button-pulse"
+        >
+          Go to Dashboard
+          <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+        </Link>
+      );
+    } else if (isPreviewMode) {
+      // Preview mode but not logged in: Sign Up
+      return (
+        <Link 
+          to="/signup"
+          className="btn btn-primary group animate-button-pulse"
+        >
+          Get Started
+          <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+        </Link>
+      );
+    } else {
+      // Public mode: Join Waitlist
+      return (
+        <button 
+          onClick={scrollToWaitlist}
+          className="btn btn-primary group animate-button-pulse"
+        >
+          Join Waitlist
+          <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+        </button>
+      );
     }
   };
 
@@ -41,13 +85,7 @@ export function Hero() {
               Welcome to the new standard
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button 
-                onClick={scrollToWaitlist}
-                className="btn btn-primary group animate-button-pulse"
-              >
-                Join Waitlist
-                <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
-              </button>
+              {renderCTA()}
               <button 
                 onClick={scrollToHowItWorks}
                 className="btn btn-outline"

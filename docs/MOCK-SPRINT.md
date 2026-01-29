@@ -154,7 +154,118 @@ We need to add mock support for:
 
 ---
 
-## 🚀 MOCK SPRINT PLAN - Incremental Build Strategy
+## ⚠️ CRITICAL ANALYSIS: What Needs Real API Docs
+
+### **Phase 2: Services Enhancement** 
+**STATUS:** ⚠️ BLOCKED - Requires actual API documentation
+
+#### ❌ Cannot Mock Without Docs:
+
+**1. Nium Collection Flow (CRITICAL)**
+- How to initiate payment collection (POST /payment-links? /customers?)
+- Payment method selection UI/flow
+- Virtual account generation for bank transfers
+- Webhook payload structures
+- Payment status lifecycle
+- Error codes and handling
+- **Risk:** Building wrong flow = complete rewrite later
+
+**2. Flutterwave Bank Validation**
+- Account name verification endpoint: `POST /v3/accounts/resolve`
+- Request/response structure
+- Nigerian bank codes list
+- Error handling for invalid accounts
+- **Risk:** Users adding wrong recipients, failed transfers
+
+**3. Flutterwave Transfer Flow**
+- Transfer initiation: `POST /v3/transfers`
+- Transfer status polling: `GET /v3/transfers/:id`
+- Webhook payloads for status updates
+- Idempotency keys (prevent duplicate transfers)
+- **Risk:** Duplicate charges, failed transfers
+
+**4. Flutterwave Bills**
+- Bill categories endpoint structure
+- Provider list per country
+- Account validation per provider
+- Payment request format
+- **Risk:** Users can't pay bills correctly
+
+---
+
+### **What We CAN Build Now (Safe to Mock)**
+
+✅ **Phase 3: UI Pages (No API knowledge needed)**
+- Recipients list/add pages (CRUD with Supabase)
+- Transaction history pages (read from our DB)
+- Settings page (profile management)
+- Confirmation/success pages (UI only)
+
+✅ **Phase 4: Transaction History** (DB-driven, no API calls)
+
+✅ **Phase 5: Routes & Integration** (Connect existing pieces)
+
+---
+
+## 🎯 REVISED STRATEGY
+
+### **SKIP Phase 2 for now**
+Cannot build proper services without real API docs. Assumptions = technical debt.
+
+### **BUILD Phase 3-5 First**
+Focus on UI pages that don't depend on external APIs:
+1. Recipients management (Supabase CRUD)
+2. Transaction history (read-only from DB)
+3. Settings page (profile management)
+4. UI wiring and navigation
+
+### **Return to Phase 2 Later**
+Once we have Nium/Flutterwave sandbox access:
+1. Read actual API docs
+2. Test in sandbox
+3. Build services with real endpoints
+4. Wire up to existing UI
+
+---
+
+## 📋 NEW IMPLEMENTATION ORDER
+
+```
+NOW (No API docs needed):
+├─ Phase 3: Recipients Management (/recipients, /recipients/add)
+├─ Phase 4: Transaction History (/transactions, /transactions/:id)
+├─ Phase 4: Settings Page (/settings)
+└─ Phase 5: Routes & Navigation
+
+LATER (When API docs available):
+├─ Phase 2: Nium service (collection)
+├─ Phase 2: Flutterwave service (transfers + bills)
+├─ Phase 3: Connect Send Money to services
+└─ Phase 3: Connect Pay Bills to services
+```
+
+---
+
+## ✅ What Stakeholders Can Test Now
+
+**Without Phase 2 APIs:**
+- Add/manage recipients ✅
+- View transaction history ✅ (from DB)
+- Update profile/settings ✅
+- Full navigation ✅
+
+**Placeholders for later:**
+- "Connect Payment Method" button (disabled until Nium ready)
+- "Send Money" shows "Coming Soon - API Integration Pending"
+- "Pay Bills" shows available providers but can't process
+
+---
+
+## 🎯 Ready to Proceed?
+
+**Shall I start with Phase 3 (Recipients Management)?** This is pure UI + Supabase CRUD, no API assumptions needed.
+
+---
 
 **Goal:** Build complete testable MVP with mock data while awaiting API approvals
 

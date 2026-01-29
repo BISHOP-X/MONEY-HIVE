@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" style="background-color: #1A1B1F;">
+<html lang="en" class="dark" style="background-color: #1A1B1F;">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg.svg" />
@@ -22,9 +22,130 @@
     
     <!-- Theme color for mobile browsers -->
     <meta name="theme-color" content="#1A1B1F">
+    
+    <!-- Critical CSS for splash screen - prevents any flash -->
+    <style>
+      /* Prevent any flash - hide everything until ready */
+      html, body {
+        background-color: #1A1B1F !important;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* Splash Screen Styles */
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #1A1B1F 0%, #0f1012 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+      }
+      
+      #splash-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      
+      #splash-logo {
+        width: 80px;
+        height: 80px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      
+      #splash-text {
+        margin-top: 20px;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #F9B233 0%, #e5a02d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      #splash-loader {
+        margin-top: 40px;
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(249, 178, 51, 0.2);
+        border-top-color: #F9B233;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Hide root until React is ready */
+      #root:empty {
+        display: none;
+      }
+    </style>
   </head>
   <body style="background-color: #1A1B1F;">
+    <!-- Splash Screen - Shows immediately, hides when app loads -->
+    <div id="splash-screen">
+      <img id="splash-logo" src="/favicon.svg.svg" alt="MoneyHive" />
+      <div id="splash-text">MoneyHive</div>
+      <div id="splash-loader"></div>
+    </div>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Hide splash screen when app is ready -->
+    <script>
+      // Hide splash after a minimum display time and when DOM is interactive
+      const minDisplayTime = 800;
+      const startTime = Date.now();
+      
+      function hideSplash() {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, minDisplayTime - elapsed);
+        
+        setTimeout(() => {
+          const splash = document.getElementById('splash-screen');
+          if (splash) {
+            splash.classList.add('hidden');
+            // Remove from DOM after animation
+            setTimeout(() => {
+              if (splash.parentNode) {
+                splash.parentNode.removeChild(splash);
+              }
+            }, 500);
+          }
+        }, remaining);
+      }
+      
+      // Hide when React app mounts (root has content)
+      const observer = new MutationObserver((mutations, obs) => {
+        const root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          hideSplash();
+          obs.disconnect();
+        }
+      });
+      
+      observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+      
+      // Fallback: hide after max 3 seconds regardless
+      setTimeout(hideSplash, 3000);
+    </script>
   </body>
 </html>

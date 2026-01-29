@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Send, 
@@ -15,7 +16,6 @@ import {
   EyeOff,
   Bell,
   Settings,
-  LogOut,
   User,
   Shield,
   Smartphone,
@@ -27,6 +27,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useStakeholderAuth } from '@/hooks/useStakeholderAuth';
 
 interface Transaction {
   id: string;
@@ -48,16 +49,17 @@ interface ExchangeRate {
 }
 
 export default function DashboardPage() {
-  const [user] = useState({
-    name: 'Sarah Chen',
-    email: 'sarah.chen@email.com',
+  const { mockUser } = useStakeholderAuth();
+  
+  const user = {
+    name: mockUser ? `${mockUser.firstName} ${mockUser.lastName}` : 'User',
+    email: mockUser?.email || 'user@example.com',
     isVerified: true,
     balance: 2450.75,
     currency: 'GBP'
-  });
+  };
 
   const [showBalance, setShowBalance] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('7d');
 
   const [transactions] = useState<Transaction[]>([
     {
@@ -193,130 +195,174 @@ export default function DashboardPage() {
     }
   };
 
+  const IconComponent = (props: { card: typeof summaryCards[0] }) => {
+    const Icon = props.card.icon;
+    return <Icon className="w-7 h-7 text-white" />;
+  };
+
+  const ActionIcon = (props: { action: typeof quickActions[0] }) => {
+    const Icon = props.action.icon;
+    return <Icon className="w-6 h-6 text-white" />;
+  };
+
+  const RateIcon = (props: { rate: typeof exchangeRates[0] }) => {
+    const Icon = props.rate.icon;
+    return <Icon className="w-5 h-5 text-primary dark:text-primary" />;
+  };
+
   return (
-    <main className="min-h-screen bg-foundation-light dark:bg-foundation-dark mode-transition">
+    <main className="min-h-screen bg-gradient-to-br from-primary/5 via-foundation-light to-supporting/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 mode-transition">
       <Header />
       
-      <div className="pt-20 pb-8">
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 -left-32 w-64 h-64 bg-supporting/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-1/4 w-48 h-48 bg-primary/20 rounded-full blur-2xl"></div>
+      </div>
+      
+      <div className="relative pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header */}
+          {/* Compact User Greeting - Like Reference Design */}
           <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
+            className="mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-secondary dark:text-foundation-light font-jakarta">
-                  Welcome back, {user.name.split(' ')[0]} 👋
-                </h1>
-                <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta mt-1">
-                  Here's what's happening with your money today
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <motion.div 
+                  className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary to-supporting rounded-full shadow-lg flex items-center justify-center"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.3, type: "spring" }}
                 >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Notifications
-                </Button>
-                <Button
-                  className="bg-primary hover:bg-primary/90 text-secondary font-jakarta"
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Money
-                </Button>
+                  <span className="text-lg font-bold text-white font-jakarta">
+                    {user.name.charAt(0)}
+                  </span>
+                </motion.div>
+                <div>
+                  <p className="text-xs text-secondary/60 dark:text-foundation-light/60 font-jakarta">Welcome</p>
+                  <h2 className="text-base sm:text-lg font-bold text-secondary dark:text-foundation-light font-jakarta">
+                    {user.name}
+                  </h2>
+                </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 w-10 rounded-full hover:bg-primary/10"
+              >
+                <Bell className="w-5 h-5 text-secondary/60 dark:text-foundation-light/60" />
+              </Button>
             </div>
           </motion.div>
 
-          {/* Account Balance Card */}
+          {/* Hero Balance Card - Dominant Element */}
           <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: "easeInOut" }}
+            className="mb-5 sm:mb-6"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <Card className="bg-gradient-to-br from-primary/10 to-supporting/10 dark:from-primary/5 dark:to-supporting/5 border-none shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-supporting border-none shadow-2xl">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2),transparent_50%)]"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+              <CardContent className="relative p-6 sm:p-8">
+                <div className="flex flex-col gap-6">
                   <div>
-                    <p className="text-secondary/70 dark:text-foundation-light/70 font-jakarta mb-2">
-                      Available Balance
-                    </p>
-                    <div className="flex items-center space-x-3">
-                      {showBalance ? (
-                        <h2 className="text-3xl font-bold text-secondary dark:text-foundation-light font-jakarta">
-                          £{user.balance.toLocaleString('en-GB', { minimumFractionDigits: 2 })}
-                        </h2>
-                      ) : (
-                        <h2 className="text-3xl font-bold text-secondary dark:text-foundation-light font-jakarta">
-                          ••••••
-                        </h2>
-                      )}
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <PoundSterling className="w-5 h-5 text-white" />
+                      </div>
+                      <p className="text-white/90 font-jakarta text-sm font-medium">
+                        Total Balance
+                      </p>
                       <button
                         onClick={() => setShowBalance(!showBalance)}
-                        className="p-2 hover:bg-white/20 dark:hover:bg-black/20 rounded-full transition-colors"
+                        className="ml-auto p-2 hover:bg-white/20 rounded-lg transition-all"
                         aria-label={showBalance ? "Hide balance" : "Show balance"}
                       >
                         {showBalance ? (
-                          <EyeOff className="w-5 h-5 text-secondary/70 dark:text-foundation-light/70" />
+                          <EyeOff className="w-5 h-5 text-white/80" />
                         ) : (
-                          <Eye className="w-5 h-5 text-secondary/70 dark:text-foundation-light/70" />
+                          <Eye className="w-5 h-5 text-white/80" />
                         )}
                       </button>
                     </div>
+                    {showBalance ? (
+                      <h1 className="text-5xl sm:text-6xl font-bold text-white font-jakarta mb-2">
+                        £{user.balance.toLocaleString('en-GB', { minimumFractionDigits: 2 })}
+                      </h1>
+                    ) : (
+                      <h1 className="text-5xl sm:text-6xl font-bold text-white font-jakarta mb-2">
+                        ••••••
+                      </h1>
+                    )}
                   </div>
                   
-                  <div className="flex items-center space-x-2">
+                  {/* Top Up Button - Like Reference Design */}
+                  <Button
+                    className="w-full bg-white hover:bg-white/90 text-primary font-jakarta shadow-lg transition-all py-6 text-base font-semibold"
+                  >
+                    <PoundSterling className="w-5 h-5 mr-2" />
+                    Top Up
+                  </Button>
+                  
+                  <div className="flex gap-2">
                     {user.isVerified && (
-                      <div className="flex items-center space-x-1 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-                        <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-                        <span className="text-sm font-medium text-green-700 dark:text-green-300 font-jakarta">
+                      <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl border border-white/30 flex-1 sm:flex-none">
+                        <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-white font-jakarta whitespace-nowrap">
                           Verified
                         </span>
                       </div>
                     )}
+                    <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl border border-white/20 flex-1 sm:flex-none">
+                      <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white/90 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm text-white/90 font-jakarta whitespace-nowrap">
+                        GBP Account
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* Summary Cards */}
+          {/* Recent Activity - Small Cards Section */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            className="mb-5 sm:mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeInOut" }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
           >
+            <h3 className="text-sm font-semibold text-secondary/70 dark:text-foundation-light/70 font-jakarta mb-3">
+              Recent Activity
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {summaryCards.map((card, index) => (
               <motion.div
                 key={card.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 + (index * 0.1), ease: "easeInOut" }}
-                whileHover={{ y: -4, boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.1)" }}
+                transition={{ duration: 0.4, delay: 0.25 + (index * 0.05), ease: "easeOut" }}
               >
-                <Card className="bg-white dark:bg-slate-700/50 border-none shadow-lg consistent-hover">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center`}>
-                        <card.icon className="w-6 h-6 text-white" />
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-primary/10 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className={`w-10 h-10 ${card.color} rounded-xl flex items-center justify-center shadow-md`}>
+                        <IconComponent card={card} className="w-5 h-5 text-white" />
                       </div>
                     </div>
                     <h3 className="text-2xl font-bold text-secondary dark:text-foundation-light font-jakarta mb-1">
                       {card.value}
                     </h3>
-                    <p className="text-sm text-secondary/70 dark:text-foundation-light/70 font-jakarta mb-2">
+                    <p className="text-xs text-secondary/70 dark:text-foundation-light/70 font-jakarta mb-2">
                       {card.title}
                     </p>
-                    <div className={`text-sm font-medium font-jakarta ${
+                    <div className={`text-xs font-medium font-jakarta ${
                       card.changeType === 'positive' 
                         ? 'text-green-600 dark:text-green-400' 
                         : card.changeType === 'negative'
@@ -329,40 +375,50 @@ export default function DashboardPage() {
                 </Card>
               </motion.div>
             ))}
+            </div>
           </motion.div>
 
           {/* Main Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Left Column - Quick Actions & Recent Transactions */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6 md:space-y-8">
               {/* Quick Actions */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3, ease: "easeInOut" }}
               >
-                <Card className="bg-white dark:bg-slate-700/50 border-none shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
-                      Quick Actions
-                    </CardTitle>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-primary/10 dark:border-slate-700 shadow-xl">
+                  <CardHeader className="border-b border-primary/10 dark:border-slate-700 p-4 sm:p-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-supporting rounded-lg flex items-center justify-center">
+                        <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
+                      <CardTitle className="text-base sm:text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
+                        Quick Actions
+                      </CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       {quickActions.map((action, index) => (
-                        <motion.button
-                          key={action.title}
-                          className={`${action.color} text-white p-6 rounded-xl text-left transition-all duration-300 ease-in-out consistent-hover`}
-                          whileHover={{ y: -2, boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.15)" }}
-                          whileTap={{ scale: 0.95 }}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.6, delay: 0.4 + (index * 0.1), ease: "easeInOut" }}
-                        >
-                          <action.icon className="w-8 h-8 mb-3" />
-                          <h3 className="font-semibold font-jakarta mb-1">{action.title}</h3>
-                          <p className="text-sm opacity-90 font-jakarta">{action.description}</p>
-                        </motion.button>
+                        <Link to={action.href} key={action.title}>
+                          <motion.div
+                            className="relative overflow-hidden bg-gradient-to-br from-white to-slate-50 dark:from-slate-700 dark:to-slate-800 border border-primary/20 dark:border-slate-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-left transition-all duration-300 h-full group hover:border-primary/40 dark:hover:border-primary/40 shadow-md hover:shadow-xl"
+                            whileHover={{ y: -4, scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.4 + (index * 0.1), ease: "easeInOut" }}
+                          >
+                            <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full -translate-y-8 translate-x-8 sm:-translate-y-10 sm:translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div className={`relative w-10 h-10 sm:w-12 sm:h-12 ${action.color} rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                              <ActionIcon action={action} />
+                            </div>
+                            <h3 className="relative font-semibold font-jakarta mb-1 text-sm sm:text-base text-secondary dark:text-foundation-light">{action.title}</h3>
+                            <p className="relative text-xs sm:text-sm text-secondary/70 dark:text-foundation-light/70 font-jakarta">{action.description}</p>
+                          </motion.div>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
@@ -375,54 +431,61 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4, ease: "easeInOut" }}
               >
-                <Card className="bg-white dark:bg-slate-700/50 border-none shadow-lg">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
-                        Recent Transactions
-                      </CardTitle>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-primary/10 dark:border-slate-700 shadow-xl">
+                  <CardHeader className="border-b border-primary/10 dark:border-slate-700 p-4 sm:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                          <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        </div>
+                        <CardTitle className="text-base sm:text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
+                          Recent Transactions
+                        </CardTitle>
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                        className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta shadow-sm text-xs sm:text-sm px-2 sm:px-3"
                       >
                         View All
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
+                  <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+                    <div className="space-y-2 sm:space-y-3">
                       <AnimatePresence>
                         {transactions.map((transaction, index) => (
                           <motion.div
                             key={transaction.id}
-                            className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-600/30 rounded-xl consistent-hover"
+                            className="relative overflow-hidden flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-slate-50/50 to-transparent dark:from-slate-700/30 dark:to-transparent border border-primary/10 dark:border-slate-600 rounded-lg sm:rounded-xl transition-all duration-300 hover:border-primary/30 hover:shadow-md"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.5 + (index * 0.1), ease: "easeInOut" }}
-                            whileHover={{ x: 4 }}
+                            whileHover={{ x: 4, scale: 1.01 }}
                           >
-                            <div className="flex items-center space-x-4">
-                              <div className="w-10 h-10 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm">
+                            <div className="flex items-center space-x-3 min-w-0 flex-1">
+                              <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-white to-slate-100 dark:from-slate-600 dark:to-slate-700 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
                                 {getTransactionIcon(transaction.type)}
+                                <div className="absolute -top-1 -right-1">
+                                  {getStatusIcon(transaction.status)}
+                                </div>
                               </div>
-                              <div>
-                                <h4 className="font-medium text-secondary dark:text-foundation-light font-jakarta">
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-semibold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta truncate">
                                   {transaction.recipient}
                                 </h4>
-                                <p className="text-sm text-secondary/60 dark:text-foundation-light/60 font-jakarta">
+                                <p className="text-xs text-secondary/60 dark:text-foundation-light/60 font-jakarta truncate">
                                   {formatDate(transaction.date)}
                                 </p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="flex items-center space-x-2">
-                                <span className="font-semibold text-secondary dark:text-foundation-light font-jakarta">
+                            <div className="text-right flex-shrink-0 ml-2">
+                              <div className="flex items-center justify-end space-x-1 sm:space-x-2 mb-1">
+                                <span className="font-bold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta whitespace-nowrap">
                                   {transaction.currency === 'GBP' ? '£' : '₦'}{transaction.amount.toLocaleString()}
                                 </span>
-                                {getStatusIcon(transaction.status)}
                               </div>
-                              <p className="text-xs text-secondary/50 dark:text-foundation-light/50 font-jakarta">
+                              <p className="text-xs text-secondary/50 dark:text-foundation-light/50 font-jakarta truncate max-w-[100px] sm:max-w-none">
                                 {transaction.reference}
                               </p>
                             </div>
@@ -436,48 +499,54 @@ export default function DashboardPage() {
             </div>
 
             {/* Right Column - Exchange Rates & Account Info */}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {/* Exchange Rates */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5, ease: "easeInOut" }}
               >
-                <Card className="bg-white dark:bg-slate-700/50 border-none shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
-                      Live Exchange Rates
-                    </CardTitle>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-primary/10 dark:border-slate-700 shadow-xl">
+                  <CardHeader className="border-b border-primary/10 dark:border-slate-700 p-4 sm:p-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
+                      <CardTitle className="text-base sm:text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
+                        Live Exchange Rates
+                      </CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
+                  <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+                    <div className="space-y-2 sm:space-y-3">
                       {exchangeRates.map((rate, index) => (
                         <motion.div
                           key={`${rate.from}-${rate.to}`}
-                          className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-600/30 rounded-xl"
+                          className="relative overflow-hidden flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-slate-50/50 to-transparent dark:from-slate-700/30 dark:to-transparent border border-primary/10 dark:border-slate-600 rounded-lg sm:rounded-xl transition-all duration-300 hover:border-primary/30 hover:shadow-md"
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.6, delay: 0.6 + (index * 0.1), ease: "easeInOut" }}
+                          whileHover={{ scale: 1.02 }}
                         >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center">
-                              <rate.icon className="w-4 h-4 text-primary" />
+                          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary/20 to-supporting/20 dark:from-primary/10 dark:to-supporting/10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                              <RateIcon rate={rate} />
                             </div>
-                            <div>
-                              <p className="font-medium text-secondary dark:text-foundation-light font-jakarta">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-semibold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta truncate">
                                 {rate.from}/NGN
                               </p>
-                              <p className="text-sm text-secondary/60 dark:text-foundation-light/60 font-jakarta">
+                              <p className="text-xs sm:text-sm text-secondary/70 dark:text-foundation-light/70 font-jakarta truncate">
                                 1 {rate.from} = ₦{rate.rate.toLocaleString()}
                               </p>
                             </div>
                           </div>
-                          <div className={`text-sm font-medium font-jakarta ${
+                          <div className={`flex items-center gap-0.5 sm:gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold font-jakarta flex-shrink-0 ${
                             rate.change > 0 
-                              ? 'text-green-600 dark:text-green-400' 
-                              : 'text-red-600 dark:text-red-400'
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
+                              : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                           }`}>
-                            {rate.change > 0 ? '+' : ''}{rate.change}%
+                            {rate.change > 0 ? '↑' : '↓'} {Math.abs(rate.change)}%
                           </div>
                         </motion.div>
                       ))}
@@ -492,51 +561,56 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6, ease: "easeInOut" }}
               >
-                <Card className="bg-white dark:bg-slate-700/50 border-none shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
-                      Account Overview
-                    </CardTitle>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-primary/10 dark:border-slate-700 shadow-xl">
+                  <CardHeader className="border-b border-primary/10 dark:border-slate-700 p-4 sm:p-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
+                      <CardTitle className="text-base sm:text-xl font-semibold text-secondary dark:text-foundation-light font-jakarta">
+                        Account Overview
+                      </CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
+                  <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+                    <div className="space-y-3 sm:space-y-4">
+                      <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 bg-gradient-to-r from-slate-50/50 to-transparent dark:from-slate-700/30 dark:to-transparent border border-primary/10 dark:border-slate-600 rounded-lg sm:rounded-xl">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary/20 to-supporting/20 dark:from-primary/10 dark:to-supporting/10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                          <User className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                         </div>
-                        <div>
-                          <p className="font-medium text-secondary dark:text-foundation-light font-jakarta">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta truncate">
                             {user.name}
                           </p>
-                          <p className="text-sm text-secondary/60 dark:text-foundation-light/60 font-jakarta">
+                          <p className="text-xs sm:text-sm text-secondary/70 dark:text-foundation-light/70 font-jakarta truncate">
                             {user.email}
                           </p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                          <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 bg-gradient-to-r from-green-50/50 to-transparent dark:from-green-900/10 dark:to-transparent border border-green-200/30 dark:border-green-700/30 rounded-lg sm:rounded-xl">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                          <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                         </div>
-                        <div>
-                          <p className="font-medium text-secondary dark:text-foundation-light font-jakarta">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta truncate">
                             Verification Status
                           </p>
-                          <p className="text-sm text-green-600 dark:text-green-400 font-jakarta">
-                            Fully Verified
+                          <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 font-jakarta font-medium truncate">
+                            ✓ Fully Verified
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                          <Smartphone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-900/10 dark:to-transparent border border-blue-200/30 dark:border-blue-700/30 rounded-lg sm:rounded-xl">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                          <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
                         </div>
-                        <div>
-                          <p className="font-medium text-secondary dark:text-foundation-light font-jakarta">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-sm sm:text-base text-secondary dark:text-foundation-light font-jakarta truncate">
                             Mobile App
                           </p>
-                          <p className="text-sm text-secondary/60 dark:text-foundation-light/60 font-jakarta">
+                          <p className="text-xs text-secondary/70 dark:text-foundation-light/70 font-jakarta truncate">
                             Download for faster transfers
                           </p>
                         </div>
@@ -544,9 +618,9 @@ export default function DashboardPage() {
 
                       <Button
                         variant="outline"
-                        className="w-full border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta mt-4"
+                        className="w-full border-primary/30 hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-supporting/10 text-secondary dark:text-foundation-light font-jakarta mt-3 sm:mt-4 shadow-sm transition-all duration-300 text-sm"
                       >
-                        <Settings className="w-4 h-4 mr-2" />
+                        <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
                         Account Settings
                       </Button>
                     </div>

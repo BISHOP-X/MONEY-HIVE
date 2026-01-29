@@ -1,17 +1,20 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from './theme-toggle';
 import { useState, useEffect } from 'react';
-import { User, LogOut, Settings, Bell, Menu, X, Eye, EyeOff } from 'lucide-react';
+import { User, LogOut, Settings, Menu, X, Eye } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 import { usePreviewMode } from '../hooks/usePreviewMode';
+import { useStakeholderAuth, useStakeholderDisplayName } from '../hooks/useStakeholderAuth';
 
 const navLinks = [
+  { name: 'Home', path: '/' },
   { name: 'Send Money', path: '/send-money' },
   { name: 'Pay Bills', path: '/pay-bills' },
   { name: 'About', path: '/about' },
@@ -22,8 +25,11 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isDashboard = location.pathname === '/dashboard';
   const { isPreviewMode, disablePreviewMode } = usePreviewMode();
+  const { isAuthenticated, logout } = useStakeholderAuth();
+  const displayName = useStakeholderDisplayName();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,7 +98,7 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {/* Show nav links only in preview mode */}
+              {/* Show ALL nav links in preview mode - ProtectedRoute handles auth redirects */}
               {isPreviewMode && !isDashboard && (
                 <div className="flex items-center space-x-6">
                   {navLinks.map((link) => (
@@ -112,17 +118,20 @@ export function Header() {
 
               <ThemeToggle />
 
-              {isDashboard ? (
-                // Dashboard Header - Authenticated User
-                <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
-                  >
-                    <Bell className="w-4 h-4 mr-2" />
-                    <span className="hidden sm:inline">Notifications</span>
-                  </Button>
+              {isPreviewMode && isAuthenticated ? (
+                // PREVIEW MODE + LOGGED IN: Show Dashboard + User Menu
+                <div className="flex items-center space-x-3">
+                  {!isDashboard && (
+                    <Link to="/dashboard">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
+                      >
+                        Dashboard
+                      </Button>
+                    </Link>
+                  )}
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -132,19 +141,26 @@ export function Header() {
                         className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                       >
                         <User className="w-4 h-4 mr-2" />
-                        Sarah C.
+                        {displayName}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                         <User className="w-4 h-4 mr-2" />
-                        Profile
+                        Dashboard
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/settings')}>
                         <Settings className="w-4 h-4 mr-2" />
                         Settings
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => {
+                          logout();
+                          navigate('/');
+                        }}
+                        className="text-red-600 dark:text-red-400"
+                      >
                         <LogOut className="w-4 h-4 mr-2" />
                         Sign Out
                       </DropdownMenuItem>
@@ -152,26 +168,28 @@ export function Header() {
                   </DropdownMenu>
                 </div>
               ) : isPreviewMode ? (
-                // Preview Mode - Show Login/Dashboard buttons
+                // PREVIEW MODE + NOT LOGGED IN: Show Login/Signup buttons
                 <div className="flex items-center space-x-3">
-                  <Link to="/dashboard">
+                  <Link to="/login">
                     <Button
                       variant="outline"
                       size="sm"
                       className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
                     >
-                      Dashboard
+                      Log In
                     </Button>
                   </Link>
-                  <button
-                    onClick={scrollToWaitlist}
-                    className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-6 py-2 rounded-lg text-sm hover:shadow-button-hover transition-all duration-300"
-                  >
-                    Get Started
-                  </button>
+                  <Link to="/signup">
+                    <Button
+                      size="sm"
+                      className="bg-primary hover:bg-primary/90 text-secondary font-semibold"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
                 </div>
               ) : (
-                // Public - Landing Page Header (Waitlist Only)
+                // PUBLIC MODE: Just Waitlist
                 <button
                   onClick={scrollToWaitlist}
                   className="bg-primary hover:bg-primary/90 text-secondary font-semibold px-8 py-3 rounded-lg text-lg hover:shadow-button-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
@@ -203,34 +221,108 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isPreviewMode && isMobileMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-foundation-dark border-t border-gray-200 dark:border-gray-800">
-            <div className="px-4 py-4 space-y-3">
-              {navLinks.map((link) => (
+        {/* Mobile Menu - Enhanced with Smooth Animation */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isPreviewMode && isMobileMenuOpen 
+              ? 'max-h-screen opacity-100' 
+              : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="bg-gradient-to-b from-white to-gray-50 dark:from-foundation-dark dark:to-slate-900 border-t border-gray-200 dark:border-gray-800 shadow-xl">
+            <div className="px-4 py-6 space-y-1">
+              {/* Show ALL nav links - ProtectedRoute handles auth redirects */}
+              {navLinks.map((link, index) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block py-2 text-base font-medium ${location.pathname === link.path
-                      ? 'text-primary'
-                      : 'text-secondary dark:text-foundation-light/80'
-                    }`}
+                  className={`block py-3 px-4 text-base font-medium rounded-xl transition-all duration-200 ${
+                    location.pathname === link.path
+                      ? 'bg-primary/10 text-primary shadow-sm'
+                      : 'text-secondary dark:text-foundation-light/80 hover:bg-gray-100 dark:hover:bg-slate-800'
+                  }`}
+                  style={{
+                    animation: isMobileMenuOpen ? `slideIn 0.3s ease-out ${index * 0.05}s both` : 'none'
+                  }}
                 >
                   {link.name}
                 </Link>
               ))}
-              <hr className="border-gray-200 dark:border-gray-700" />
-              <Link
-                to="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 text-base font-medium text-primary"
-              >
-                Dashboard
-              </Link>
+              
+              <div className="my-4 border-t border-gray-200 dark:border-gray-700"></div>
+              
+              {isAuthenticated ? (
+                // Logged in: Show Dashboard and Sign Out
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block py-3 px-4 text-base font-medium rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 shadow-sm"
+                    style={{
+                      animation: isMobileMenuOpen ? `slideIn 0.3s ease-out ${navLinks.length * 0.05}s both` : 'none'
+                    }}
+                  >
+                    <User className="w-4 h-4 inline mr-2" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                      navigate('/');
+                    }}
+                    className="block w-full text-left py-3 px-4 text-base font-medium rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                    style={{
+                      animation: isMobileMenuOpen ? `slideIn 0.3s ease-out ${(navLinks.length + 1) * 0.05}s both` : 'none'
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 inline mr-2" />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                // Not logged in: Show Login and Sign Up
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block py-3 px-4 text-base font-medium rounded-xl text-secondary dark:text-foundation-light/80 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all duration-200"
+                    style={{
+                      animation: isMobileMenuOpen ? `slideIn 0.3s ease-out ${navLinks.length * 0.05}s both` : 'none'
+                    }}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block py-3 px-4 text-base font-semibold rounded-xl bg-gradient-to-r from-primary to-supporting text-white hover:shadow-lg transition-all duration-200"
+                    style={{
+                      animation: isMobileMenuOpen ? `slideIn 0.3s ease-out ${(navLinks.length + 1) * 0.05}s both` : 'none'
+                    }}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Slide-in Animation Keyframes */}
+        <style>{`
+          @keyframes slideIn {
+            from {
+              opacity: 0;
+              transform: translateX(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+        `}</style>
       </nav>
     </>
   );
