@@ -121,7 +121,7 @@ export default function DashboardPage() {
       change: 'vs traditional banks',
       changeType: 'positive' as const,
       icon: TrendingUp,
-      color: 'from-primary to-yellow-500'
+      color: 'from-primary to-orange-600'
     },
     {
       title: 'Active Recipients',
@@ -172,7 +172,7 @@ export default function DashboardPage() {
       case 'completed':
         return <CheckCircle className="w-4 h-4 text-green-600" />;
       case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
+        return <Clock className="w-4 h-4 text-orange-600" />;
       case 'failed':
         return <AlertCircle className="w-4 h-4 text-red-600" />;
       default:
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                 >
                   <Bell className="w-4 h-4 mr-2" />
                   Notifications
@@ -384,7 +384,7 @@ export default function DashboardPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                        className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                       >
                         View All
                       </Button>
@@ -544,7 +544,7 @@ export default function DashboardPage() {
 
                       <Button
                         variant="outline"
-                        className="w-full border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta mt-4"
+                        className="w-full border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta mt-4"
                       >
                         <Settings className="w-4 h-4 mr-2" />
                         Account Settings

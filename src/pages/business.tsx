@@ -35,7 +35,7 @@ export default function BusinessPage() {
                   >
                     Join the Waitlist
                   </Button>
-                  <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 font-semibold px-8 py-4 text-lg transition-all duration-300">
+                  <Button size="lg" variant="outline" className="border-primary/30 text-primary hover:border-primary hover:bg-primary/10 font-semibold px-8 py-4 text-lg transition-all duration-300">
                     Learn More
                   </Button>
                 </div>
@@ -176,13 +176,13 @@ export default function BusinessPage() {
                     status: "In Progress",
                   },
                   {
-                    phase: "Phase 2 (2026)",
+                    phase: "Phase 2 (2027)",
                     title: "Business Payment Solutions",
                     description: "Launching bulk payments, supplier payments, and dedicated business accounts.",
                     status: "Planned",
                   },
                   {
-                    phase: "Phase 3 (2027+)",
+                    phase: "Phase 3 (2030)",
                     title: "API & Enterprise Features",
                     description: "Full API access, custom integrations, and enterprise-grade features for larger organizations.",
                     status: "Future",

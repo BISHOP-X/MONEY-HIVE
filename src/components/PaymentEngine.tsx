@@ -239,8 +239,8 @@ export function PaymentEngine({ isOpen, onClose }: PaymentEngineProps) {
                       <div className="text-center">
                         {verificationStatus === 'pending' && (
                           <div>
-                            <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <Clock className="w-8 h-8 text-yellow-600" />
+                            <div className="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <Clock className="w-8 h-8 text-primary" />
                             </div>
                             <p className="text-secondary dark:text-foundation-light font-jakarta mb-4">
                               Single-flow KYC process (max 5 minutes)

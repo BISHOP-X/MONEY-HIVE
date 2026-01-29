@@ -45,7 +45,7 @@ export function AIFeatures() {
       title: "Personal Analytics Dashboard",
       description: "3-month minimum data analysis with weekly insight updates and peer comparison metrics",
       example: "You typically save 15% sending on weekdays",
-      color: "from-yellow-500 to-orange-600",
+      color: "from-primary to-orange-600",
       metrics: {
         analysis: "3+ months",
         updates: "Weekly",

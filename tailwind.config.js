@@ -12,8 +12,36 @@ export default {
         jakarta: ['Plus Jakarta Sans', 'sans-serif'],
       },
       colors: {
-        // Premium Color System
-        'primary': '#E3B23C', // Warm Gold
+        // Premium Color System - MoneyHive Gold
+        primary: {
+          DEFAULT: '#E3B23C',
+          50: '#fef9ed',
+          100: '#fdf2d6',
+          200: '#fae3ad',
+          300: '#f7cf7a',
+          400: '#f3b645',
+          500: '#E3B23C',
+          600: '#ca8a1a',
+          700: '#a86518',
+          800: '#894f1a',
+          900: '#72421a',
+          950: '#42210b',
+        },
+        // Safety override: anything using Tailwind's yellow will match our brand accent
+        yellow: {
+          DEFAULT: '#E3B23C',
+          50: '#fef9ed',
+          100: '#fdf2d6',
+          200: '#fae3ad',
+          300: '#f7cf7a',
+          400: '#f3b645',
+          500: '#E3B23C',
+          600: '#ca8a1a',
+          700: '#a86518',
+          800: '#894f1a',
+          900: '#72421a',
+          950: '#42210b',
+        },
         'secondary': '#2D3142', // Deep Navy
         'supporting': '#4F5D75', // Slate Gray
         'foundation': {
@@ -21,26 +49,27 @@ export default {
           dark: '#1A1B1F'
         },
         // Shadcn/ui compatible colors
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // NOTE: our CSS variables are RGB triplets (e.g. "227 178 60"), so use rgb(var(--x))
+        border: "rgb(var(--border))",
+        input: "rgb(var(--input))",
+        ring: "rgb(var(--ring))",
+        background: "rgb(var(--background))",
+        foreground: "rgb(var(--foreground))",
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "rgb(var(--muted))",
+          foreground: "rgb(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "rgb(var(--accent))",
+          foreground: "rgb(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "rgb(var(--popover))",
+          foreground: "rgb(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "rgb(var(--card))",
+          foreground: "rgb(var(--card-foreground))",
         },
       },
       boxShadow: {

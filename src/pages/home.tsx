@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CreditCard, ArrowRight, Globe2, Banknote, Lock, Smartphone, QrCode, Loader2, CheckCircle, X, AlertCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ReactCountryFlag from 'react-country-flag';
 import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
@@ -22,13 +23,14 @@ const FadeIn = ({ children, delay = 0, className = '' }: { children: React.React
 interface Country {
   name: string;
   code: string;
-  flag: string;
+  flag?: string;
 }
 
 export default function HomePage() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [countrySearchOpen, setCountrySearchOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [sendToOpen, setSendToOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [formData, setFormData] = useState({
@@ -39,6 +41,15 @@ export default function HomePage() {
     country: '',
     sendToCountry: ''
   });
+
+  const destinationCountries: Array<{ code: string; name: string }> = [
+    { code: 'NG', name: 'Nigeria' },
+    { code: 'GH', name: 'Ghana' },
+    { code: 'KE', name: 'Kenya' },
+    { code: 'other', name: 'Other' },
+  ];
+
+  const selectedDestination = destinationCountries.find((c) => c.code === formData.sendToCountry) || null;
 
   const countries: Country[] = [
     { name: "United Kingdom", code: "GB", flag: "🇬🇧" },
@@ -100,6 +111,11 @@ export default function HomePage() {
     setSelectedCountry(country);
     setFormData({ ...formData, country: country.name });
     setCountrySearchOpen(false);
+  };
+
+  const handleDestinationSelect = (code: string) => {
+    setFormData({ ...formData, sendToCountry: code });
+    setSendToOpen(false);
   };
 
   const scrollToHowItWorks = () => {
@@ -424,7 +440,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/20">
+              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/30">
                 <p className="text-sm italic text-secondary dark:text-foundation-light font-jakarta">
                   "Secure today's rate for your next family support transfer to Lagos."
                 </p>
@@ -464,7 +480,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/20">
+              <div className="p-4 bg-primary/10 dark:bg-primary/5 rounded-xl border border-primary/30">
                 <p className="text-sm italic text-secondary dark:text-foundation-light font-jakarta">
                   "Schedule monthly school fees to Nigeria and save on repeat transactions."
                 </p>
@@ -704,7 +720,13 @@ export default function HomePage() {
                   >
                     {selectedCountry ? (
                       <div className="flex items-center">
-                        <span className="mr-2 text-xl">{selectedCountry.flag}</span>
+                        <ReactCountryFlag
+                          countryCode={selectedCountry.code}
+                          svg
+                          style={{ width: '1.25em', height: '1.25em' }}
+                          className="mr-2"
+                          title={selectedCountry.code}
+                        />
                         <span className="font-jakarta">{selectedCountry.name}</span>
                       </div>
                     ) : (
@@ -731,7 +753,13 @@ export default function HomePage() {
                             className="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer flex items-center transition-colors duration-300 ease-in-out"
                             onClick={() => handleCountrySelect(country)}
                           >
-                            <span className="mr-2 text-xl">{country.flag}</span>
+                            <ReactCountryFlag
+                              countryCode={country.code}
+                              svg
+                              style={{ width: '1.25em', height: '1.25em' }}
+                              className="mr-2"
+                              title={country.code}
+                            />
                             <span className="text-secondary dark:text-foundation-light font-jakarta">{country.name}</span>
                           </div>
                         ))}
@@ -752,18 +780,60 @@ export default function HomePage() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-secondary dark:text-foundation-light font-jakarta">Where will you send money to?</label>
-                <select
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta appearance-none cursor-pointer"
-                  value={formData.sendToCountry}
-                  onChange={(e) => setFormData({ ...formData, sendToCountry: e.target.value })}
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5rem' }}
-                >
-                  <option value="">Select destination country</option>
-                  <option value="NG">🇳🇬 Nigeria</option>
-                  <option value="GH">🇬🇭 Ghana</option>
-                  <option value="KE">🇰🇪 Kenya</option>
-                  <option value="other">Other</option>
-                </select>
+                <div className="relative">
+                  <div
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl flex justify-between items-center cursor-pointer text-secondary dark:text-foundation-light transition-all duration-300 ease-in-out font-jakarta hover:border-primary"
+                    onClick={() => setSendToOpen(!sendToOpen)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') setSendToOpen(!sendToOpen);
+                    }}
+                  >
+                    {selectedDestination ? (
+                      <div className="flex items-center">
+                        {selectedDestination.code !== 'other' && (
+                          <ReactCountryFlag
+                            countryCode={selectedDestination.code}
+                            svg
+                            style={{ width: '1.25em', height: '1.25em' }}
+                            className="mr-2"
+                            title={selectedDestination.code}
+                          />
+                        )}
+                        <span className="font-jakarta">{selectedDestination.name}</span>
+                      </div>
+                    ) : (
+                      <span className="text-slate-500 dark:text-slate-400 font-jakarta">Select destination country</span>
+                    )}
+                    <ArrowRight className={`h-4 w-4 transition-transform duration-300 ease-in-out ${sendToOpen ? 'rotate-90' : ''}`} />
+                  </div>
+
+                  {sendToOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white dark:bg-slate-700 rounded-lg shadow-lg border border-slate-200 dark:border-slate-600 overflow-hidden mode-transition">
+                      <div className="max-h-60 overflow-y-auto">
+                        {destinationCountries.map((country) => (
+                          <div
+                            key={country.code}
+                            className="px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer flex items-center transition-colors duration-300 ease-in-out"
+                            onClick={() => handleDestinationSelect(country.code)}
+                          >
+                            {country.code !== 'other' && (
+                              <ReactCountryFlag
+                                countryCode={country.code}
+                                svg
+                                style={{ width: '1.25em', height: '1.25em' }}
+                                className="mr-2"
+                                title={country.code}
+                              />
+                            )}
+                            <span className="text-secondary dark:text-foundation-light font-jakarta">{country.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Error Message - inline */}

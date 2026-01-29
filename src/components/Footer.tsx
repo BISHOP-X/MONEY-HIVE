@@ -3,6 +3,7 @@ import { Twitter, Instagram, Linkedin, Mail, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { PaymentEngine } from './PaymentEngine';
+import { AppStoreBadges } from './AppStoreBadges';
 
 export function Footer() {
   const [showPaymentEngine, setShowPaymentEngine] = useState(false);
@@ -161,37 +162,10 @@ export function Footer() {
         {/* App Store Badges Section */}
         <div className="border-t border-foundation-light/20 pt-8 mb-8">
           <div className="text-center">
-            <h4 className="text-xl font-semibold text-foundation-light mb-6 font-jakarta">Download Our App</h4>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-              <motion.a
-                href="#"
-                className="app-store-badge"
-                whileHover={{ y: -2, boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)" }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                aria-label="Download on the App Store"
-              >
-                <img 
-                  src="/appstore.svg" 
-                  alt="Download on the App Store" 
-                  className="w-full h-full object-contain"
-                />
-              </motion.a>
-              <motion.a
-                href="#"
-                className="app-store-badge"
-                whileHover={{ y: -2, boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)" }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                aria-label="Get it on Google Play"
-              >
-                <img 
-                  src="/googleplay.svg" 
-                  alt="Get it on Google Play" 
-                  className="w-full h-full object-contain"
-                />
-              </motion.a>
-            </div>
+            <AppStoreBadges
+              title="Join the Hive"
+              titleClassName="text-xl font-semibold text-foundation-light mb-6 font-jakarta"
+            />
           </div>
         </div>
 

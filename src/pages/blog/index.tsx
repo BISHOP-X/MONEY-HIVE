@@ -148,7 +148,7 @@ export default function BlogPage() {
                     className={
                       category === selectedCategory
                         ? "bg-primary hover:bg-primary/90 text-secondary font-jakarta"
-                        : "border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                        : "border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                     }
                     size="sm"
                     onClick={() => setSelectedCategory(category)}
@@ -265,7 +265,7 @@ export default function BlogPage() {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
               >
                 Load More Articles
               </Button>

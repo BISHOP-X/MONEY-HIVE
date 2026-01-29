@@ -96,7 +96,7 @@ export default function BlogPage() {
       <Header />
       <div className="pt-16 pb-20">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-b from-yellow-50 via-white to-white">
+        <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-white dark:from-slate-900 dark:via-foundation-dark dark:to-foundation-dark">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-3xl md:text-5xl font-bold mb-6">
@@ -112,8 +112,8 @@ export default function BlogPage() {
                     variant={category === "All" ? "default" : "outline"}
                     className={
                       category === "All"
-                        ? "bg-yellow-500 hover:bg-yellow-600 text-black"
-                        : "border-yellow-200 hover:border-yellow-500 hover:bg-yellow-50"
+                        ? "bg-primary hover:bg-primary/90 text-secondary"
+                        : "border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
                     }
                     size="sm"
                   >
@@ -135,7 +135,7 @@ export default function BlogPage() {
                 </div>
               </div>
               <div className="space-y-4">
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary">
                   Featured
                 </span>
                 <h2 className="text-2xl md:text-3xl font-bold">
@@ -151,7 +151,7 @@ export default function BlogPage() {
                     <p className="text-xs text-gray-500">June 2, 2023 • 12 min read</p>
                   </div>
                 </div>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-black">
+                <Button className="bg-primary hover:bg-primary/90 text-secondary">
                   Read Article
                 </Button>
               </div>
@@ -176,13 +176,13 @@ export default function BlogPage() {
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary">
                         {post.category}
                       </span>
                       <span className="text-xs text-gray-500">{post.readTime}</span>
                     </div>
                     <CardTitle className="text-xl">
-                      <Link to={`/blog/${post.slug}`} className="hover:text-yellow-600 transition-colors">
+                      <Link to={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
                         {post.title}
                       </Link>
                     </CardTitle>
@@ -204,7 +204,7 @@ export default function BlogPage() {
             </div>
 
             <div className="flex justify-center mt-12">
-              <Button variant="outline" size="lg" className="border-yellow-200 hover:border-yellow-500">
+              <Button variant="outline" size="lg" className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light">
                 Load More Articles
               </Button>
             </div>
@@ -212,7 +212,7 @@ export default function BlogPage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="py-16 bg-yellow-500">
+        <section className="py-16 bg-primary">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">

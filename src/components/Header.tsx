@@ -118,7 +118,7 @@ export function Header() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                    className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                   >
                     <Bell className="w-4 h-4 mr-2" />
                     <span className="hidden sm:inline">Notifications</span>
@@ -129,7 +129,7 @@ export function Header() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
+                        className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light font-jakarta"
                       >
                         <User className="w-4 h-4 mr-2" />
                         Sarah C.
@@ -158,7 +158,7 @@ export function Header() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-primary/20 hover:border-primary hover:bg-primary/10"
+                      className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
                     >
                       Dashboard
                     </Button>

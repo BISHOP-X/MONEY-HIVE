@@ -223,7 +223,7 @@ export default function CareersPage() {
                       variant="outline"
                       onClick={() => setShowCVForm(false)}
                       disabled={isSubmitting}
-                      className="border-primary/20 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
+                      className="border-primary/30 hover:border-primary hover:bg-primary/10 text-secondary dark:text-foundation-light"
                     >
                       Cancel
                     </Button>

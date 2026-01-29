@@ -20,7 +20,7 @@ export function ThemeToggle() {
         variant="outline" 
         size="icon" 
         onClick={toggleTheme}
-        className="bg-transparent border-none hover:bg-gray-100/10 dark:hover:bg-primary/10 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+        className="bg-transparent border border-secondary/20 hover:border-secondary/30 hover:bg-secondary/5 dark:border-primary/30 dark:hover:border-primary/50 dark:hover:bg-primary/10 transition-all duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/20 dark:focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       >
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all duration-300 ease-in-out dark:-rotate-90 dark:scale-0 text-primary" />
