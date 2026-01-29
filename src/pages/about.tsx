@@ -68,8 +68,11 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-supporting/20 rounded-full blur-3xl transform -translate-x-4 translate-y-4"></div>
-                  <div className="relative z-10 w-full h-80 bg-gradient-to-br from-primary/10 to-supporting/10 dark:from-primary/5 dark:to-supporting/5 rounded-lg"></div>
+                  <img 
+                    src="/ourstory.png" 
+                    alt="MoneyHive connecting continents through digital remittance" 
+                    className="w-full h-auto rounded-lg"
+                  />
                 </div>
               </div>
             </div>
